@@ -4,13 +4,16 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Android Property动画 | Michael&#39;s Blog</title>
+    <title>Android布局优化 | Michael&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Michael">
     
-    <meta name="description" content="一、以上图ValueAnimator为例，展开来讲属性动画1，结构    结构选自Property动画中的ValueAnimator。
-2，流程    1），ValueAnimator算完时间比例因子后，将调用已设置好的TimeInterpolator计算出一个插值因子。插值因子是由一个时间比例因子">
+    <meta name="description" content="适配优化：由于Android设备分辨率参差不齐，所以尽可能不要使用absoluteLayout.
+
+&amp;lt; include /&amp;gt;：有些布局文件在多个地方需要使用，使用 &amp;lt; include /&amp;gt;标签，实现组件复用.
+
+&amp;lt; merge /&amp;gt;：减少层级对UI性能有非常大的提">
     
     
     
@@ -68,15 +71,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/07/13/android-property动画/" title="Android Property动画" itemprop="url">Android Property动画</a>
+      <a href="/2014/07/13/android布局优化/" title="Android布局优化" itemprop="url">Android布局优化</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://plus.google.com/100262645697225607342?rel=author" title="Michael" target="_blank" itemprop="author">Michael</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-07-13T02:19:33.000Z" itemprop="datePublished">7月 13 2014</time>
-    更新日期:<time datetime="2014-07-13T04:03:55.000Z" itemprop="dateModified">7月 13 2014</time>
+    <time datetime="2014-07-13T06:51:57.000Z" itemprop="datePublished">7月 13 2014</time>
+    更新日期:<time datetime="2014-07-13T07:08:10.000Z" itemprop="dateModified">7月 13 2014</time>
     
   </p>
 </header>
@@ -88,21 +91,23 @@
 		
 		</div>
 		
-		<p><img src="../../../../img/Valueanimator.png" alt="hellog"></p>
-<p>一、以上图ValueAnimator为例，展开来讲属性动画<br>1，结构<br>    结构选自Property动画中的ValueAnimator。</p>
-<p>2，流程<br>    1），ValueAnimator算完时间比例因子后，将调用已设置好的TimeInterpolator计算出一个插值因子。插值因子是由一个时间比例因子换算出来的图像显示状态因子。2），算完插值因子，ValueAnimator就会调用合适的TypeEvaluator，根据插值因子、初始值、结束值计算出需要动画显示的属性值。3），在ValueAnimator.AnimatorUpdateListener中的OnAnimationUpdate()函数中，用第2步取得的属性值更新object。</p>
-<p>3，类<br>     TimeInterpolator定义了动画过程中属性的变化规则。它是一个关于时间的函数。Android系统在android.view.animation包中提供了一组通用的interpolator。还可以通过实现TimeInterpolator接口来创建Interpolator.<br>     TypeEvaluator定义了动画显示的属性值类型。可以创建自己的evaluator，实现TypeEvalutor即可。Android系统可识别的类型包括int、float和颜色，分别又IntEvaluator、FloatEvaluator、ArgbEvaluator提供支持。</p>
-<p>二、ObjectAnimator，ViewPropertyAnimator<br>1，ObjectAnimator<br>    ObjectAnimator是ValueAnimator的子类，它是由计时引擎和计算目标对象的属性值ValueAnimator组合而成的。因为属性值将会自动更新，你不再需要实现ValueAnimator.AnimatorUpdateListener了，因此实现任意对象的动画显示就更加容易了。</p>
-<p>2，ViewPropertyAnimator<br>     ViewPropertyAnimator为同时动画显示View的多个属性提供了一种捷径。这种方式与ObjectAnimator类似，也会修改View的属性值，但在需要一次动画显示多个属性时效率会更高一些。</p>
-<p>三、XML中声明动画<br>property动画系统允许你用XML声明property动画，而不需要编写代码来实现。<br>为了把新采用新增property动画API与采用以前view animation框架的动画文件区分开来，自android3.1开始，你应该把property动画XML文件保存在res/animator/目录下。</p>
-<p>四、参考<br><a href="http://wikidroid.sinaapp.com/Property%E5%8A%A8%E7%94%BB#.E5.8A.A8.E7.94.BB.E4.BE.A6.E5.90.AC.E5.99.A8" target="_blank">http://wikidroid.sinaapp.com/Property%E5%8A%A8%E7%94%BB#.E5.8A.A8.E7.94.BB.E4.BE.A6.E5.90.AC.E5.99.A8</a></p>
+		<ul>
+<li><p>适配优化：由于Android设备分辨率参差不齐，所以尽可能不要使用absoluteLayout.</p>
+</li>
+<li><p>&lt; include /&gt;：有些布局文件在多个地方需要使用，使用 &lt; include /&gt;标签，实现组件复用.</p>
+</li>
+<li><p>&lt; merge /&gt;：减少层级对UI性能有非常大的提高，除了在布局时尽可能减少层级，Android还提供了组件&lt; merge /&gt;，用于合并相同的父子节点。在开发中，可以使用adt带的工具HierarchyViewer分析布局性能.</p>
+</li>
+<li><p>&lt; ViewStub /&gt;：有些子布局不需要在一开始就加载进来，它仅可能在某个条件发生时，才需要显现来提示用户。对于这种情况，Android提供了组件&lt; ViewStub /&gt;实现延迟布局。它继承自View，默认是不可见且初始时不加载。只有调用了inflate()或设置可见后，才被加入到当前布局。</p>
+</li>
+</ul>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Animation/">Animation</a>
+  <span></span> <a href="/tags/Layout/">Layout</a>
   </div>
 
 
@@ -115,7 +120,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/Michaelgeek/2014/07/13/android-property动画/" data-title="Android Property动画 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
+  <div data-url="https://github.com/Michaelgeek/2014/07/13/android布局优化/" data-title="Android布局优化 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
   </div>
 
 </div>
@@ -124,19 +129,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/07/13/android布局优化/" title="Android布局优化">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  Android布局优化</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/07/10/开篇/"  title="开篇">
+<a href="/2014/07/13/android-property动画/"  title="Android Property动画">
  <strong>NEXT:</strong><br/> 
- <span>开篇
+ <span>Android Property动画
 </span>
 </a>
 </div>
