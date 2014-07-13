@@ -4,13 +4,13 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>开篇 | Michael&#39;s Blog</title>
+    <title>Android Property动画 | Michael&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Michael">
     
-    <meta name="description" content="我的英文名叫Michael，是一名90后程序员，移动开发者。这是我个人博客的开篇。对我来说，博客主要用于记录我个人两方面的东西：技术和生活。
-就技术来讲，目前我的工作是Android机顶盒上视频类应用开发。工作外感兴趣的技术方向是iOS开发，目前处在自学阶段。因此，目前博客上技术相关的文章应该是An">
+    <meta name="description" content="一、以上图ValueAnimator为例，展开来讲属性动画1，结构    结构选自Property动画中的ValueAnimator。
+2，流程    1），ValueAnimator算完时间比例因子后，将调用已设置好的TimeInterpolator计算出一个插值因子。插值因子是由一个时间比例因子">
     
     
     
@@ -68,15 +68,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/07/10/开篇/" title="开篇" itemprop="url">开篇</a>
+      <a href="/2014/07/13/android-property动画/" title="Android Property动画" itemprop="url">Android Property动画</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://plus.google.com/100262645697225607342?rel=author" title="Michael" target="_blank" itemprop="author">Michael</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-07-10T14:46:03.000Z" itemprop="datePublished">7月 10 2014</time>
-    更新日期:<time datetime="2014-07-10T15:01:22.000Z" itemprop="dateModified">7月 10 2014</time>
+    <time datetime="2014-07-13T02:19:33.000Z" itemprop="datePublished">7月 13 2014</time>
+    更新日期:<time datetime="2014-07-13T04:03:55.000Z" itemprop="dateModified">7月 13 2014</time>
     
   </p>
 </header>
@@ -88,30 +88,34 @@
 		
 		</div>
 		
-		<p>我的英文名叫Michael，是一名90后程序员，移动开发者。这是我个人博客的开篇。对我来说，博客主要用于记录我个人两方面的东西：技术和生活。</p>
-<p>就技术来讲，目前我的工作是Android机顶盒上视频类应用开发。工作外感兴趣的技术方向是iOS开发，目前处在自学阶段。因此，目前博客上技术相关的文章应该是Android和iOS。</p>
-<p>生活中，我喜欢篮球、健身、旅游、看书、电影美剧、听歌等。博客上会或多或者记录一些生活相关的人和事。旅游所见、读书体会等等都会尽可能记录下来。希望这个博客能成为生活的时光机，经历的东西都能在这里再一次相遇。</p>
-<p>差不多了，开始博客之旅了。接下来，我会陆续将自己以前的技术学习的文章挪到这个上面来。</p>
+		<p><img src="../../../../img/Valueanimator.png" alt="hellog"></p>
+<p>一、以上图ValueAnimator为例，展开来讲属性动画<br>1，结构<br>    结构选自Property动画中的ValueAnimator。</p>
+<p>2，流程<br>    1），ValueAnimator算完时间比例因子后，将调用已设置好的TimeInterpolator计算出一个插值因子。插值因子是由一个时间比例因子换算出来的图像显示状态因子。2），算完插值因子，ValueAnimator就会调用合适的TypeEvaluator，根据插值因子、初始值、结束值计算出需要动画显示的属性值。3），在ValueAnimator.AnimatorUpdateListener中的OnAnimationUpdate()函数中，用第2步取得的属性值更新object。</p>
+<p>3，类<br>     TimeInterpolator定义了动画过程中属性的变化规则。它是一个关于时间的函数。Android系统在android.view.animation包中提供了一组通用的interpolator。还可以通过实现TimeInterpolator接口来创建Interpolator.<br>     TypeEvaluator定义了动画显示的属性值类型。可以创建自己的evaluator，实现TypeEvalutor即可。Android系统可识别的类型包括int、float和颜色，分别又IntEvaluator、FloatEvaluator、ArgbEvaluator提供支持。</p>
+<p>二、ObjectAnimator，ViewPropertyAnimator<br>1，ObjectAnimator<br>    ObjectAnimator是ValueAnimator的子类，它是由计时引擎和计算目标对象的属性值ValueAnimator组合而成的。因为属性值将会自动更新，你不再需要实现ValueAnimator.AnimatorUpdateListener了，因此实现任意对象的动画显示就更加容易了。</p>
+<p>2，ViewPropertyAnimator<br>     ViewPropertyAnimator为同时动画显示View的多个属性提供了一种捷径。这种方式与ObjectAnimator类似，也会修改View的属性值，但在需要一次动画显示多个属性时效率会更高一些。</p>
+<p>三、XML中声明动画<br>property动画系统允许你用XML声明property动画，而不需要编写代码来实现。<br>为了把新采用新增property动画API与采用以前view animation框架的动画文件区分开来，自android3.1开始，你应该把property动画XML文件保存在res/animator/目录下。</p>
+<p>四、参考<br><a href="http://wikidroid.sinaapp.com/Property%E5%8A%A8%E7%94%BB#.E5.8A.A8.E7.94.BB.E4.BE.A6.E5.90.AC.E5.99.A8" target="_blank">http://wikidroid.sinaapp.com/Property%E5%8A%A8%E7%94%BB#.E5.8A.A8.E7.94.BB.E4.BE.A6.E5.90.AC.E5.99.A8</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/blog/">blog</a>
+  <span></span> <a href="/tags/Animation/">Animation</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/生活/">生活</a>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/Michaelgeek/2014/07/10/开篇/" data-title="开篇 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
+  <div data-url="https://github.com/Michaelgeek/2014/07/13/android-property动画/" data-title="Android Property动画 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
   </div>
 
 </div>
@@ -120,14 +124,14 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/07/13/android-property动画/" title="Android Property动画">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  Android Property动画</span>
+
+<div class="next">
+<a href="/2014/07/10/开篇/"  title="开篇">
+ <strong>NEXT:</strong><br/> 
+ <span>开篇
+</span>
 </a>
 </div>
-
 
 </nav>
 
