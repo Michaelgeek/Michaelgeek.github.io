@@ -75,7 +75,7 @@
     </p>
   <p class="article-time">
     <time datetime="2014-11-09T11:25:12.000Z" itemprop="datePublished">11月 9 2014</time>
-    更新日期:<time datetime="2014-11-09T12:46:14.000Z" itemprop="dateModified">11月 9 2014</time>
+    更新日期:<time datetime="2014-11-09T12:52:41.000Z" itemprop="dateModified">11月 9 2014</time>
     
   </p>
 </header>
@@ -90,7 +90,30 @@
 		<p>最近公司需要实现对话框背景模糊效果，在网上找了很多资料，其中，这篇文章<a href="http://blog.jobbole.com/63894/" target="_blank">http://blog.jobbole.com/63894/</a>给了我很大启发，这里感谢作者的分享精神（有一点要在这里说一下，在作者的两种模糊算法性能上，我的测试结果与作者相反，不知道是不是Android新版本上的RenderScript做了许多优化）。Android自带的API中，其实已经有很成熟的接口可以实现模糊效果,也就是本文要谈的RenderScript。首先申明一点：RenderScript不仅仅能实现模糊效果，它还能做许多图片处理方面的效果。</p>
 <p>RenderScript是什么？<br>RenderScript是一个能高性能执行密集计算的Android框架，这个框架能利用硬件的多核实现平行计算，在以下这三个方面非常有用： image processing, computational photography, or computer vision。更多信息参见：<a href="http://developer.android.com/guide/topics/renderscript/compute.html" target="_blank">http://developer.android.com/guide/topics/renderscript/compute.html</a>。</p>
 <p>RenderScript有哪些类？<br>RenderScript：此类负责RenderScript框架的初始化，资源管理和卸载。并且，此类是RenderScript框架的入口。相当于计算引擎。<br>Allocation：此类是数据存储类。RenderScript计算的数据取自Allocation，并且计算所得数据存于Allocation。<br>ScriptIntrinsic：这是所有功能类的基类。具体某一方面功能的类都继承自它。比如：实现模糊效果的类ScriptIntrinsicBlur。</p>
-<p>如何实现各种效果？<br>这里拿实现图片的模糊效果举例，下面是实现图片模糊效果的实例代码，代码返回的结果就是已被模糊的图片.<br>    public Bitmap blur(Context c, Bitmap overlay) {<br>    RenderScript rs = RenderScript.create(c);<br>    Allocation overlayAlloc = Allocation.createFromBitmap(rs, overlay);<br>    ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(rs, overlayAlloc.getElement());<br>    blur.setInput(overlayAlloc);<br>    blur.setRadius(radius);<br>    blur.forEach(overlayAlloc);<br>    overlayAlloc.copyTo(overlay);<br>    return overlay;}</p>
+<p>如何实现各种效果？<br>这里拿实现图片的模糊效果举例，下面是实现图片模糊效果的实例代码，代码返回的结果就是已被模糊的图片.</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="code"><pre>public Bitmap blur(Context c, Bitmap overlay) {
+	RenderScript rs = RenderScript<span class="preprocessor">.create</span>(c)<span class="comment">;</span>
+	Allocation overlayAlloc = Allocation<span class="preprocessor">.createFromBitmap</span>(rs, overlay)<span class="comment">;</span>
+	ScriptIntrinsicBlur blur = ScriptIntrinsicBlur<span class="preprocessor">.create</span>(rs, overlayAlloc<span class="preprocessor">.getElement</span>())<span class="comment">;</span>
+	blur<span class="preprocessor">.setInput</span>(overlayAlloc)<span class="comment">;</span>
+	blur<span class="preprocessor">.setRadius</span>(radius)<span class="comment">;</span>
+	blur<span class="preprocessor">.forEach</span>(overlayAlloc)<span class="comment">;</span>
+	overlayAlloc<span class="preprocessor">.copyTo</span>(overlay)<span class="comment">;</span>
+	return overlay<span class="comment">;</span>
+}
+</pre></td></tr></table></figure>
+
+
 <p>我这里有完整的图片模糊效果demo，如果需要，请邮件我：kongyouji@gmail.com.</p>
   
 	</div>
