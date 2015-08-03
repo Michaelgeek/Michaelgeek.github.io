@@ -79,7 +79,7 @@ Android Studio
     </p>
   <p class="article-time">
     <time datetime="2015-07-17T10:26:05.000Z" itemprop="datePublished">7月 17 2015</time>
-    更新日期:<time datetime="2015-08-03T14:46:00.000Z" itemprop="dateModified">8月 3 2015</time>
+    更新日期:<time datetime="2015-08-03T14:56:36.000Z" itemprop="dateModified">8月 3 2015</time>
     
   </p>
 </header>
@@ -98,9 +98,9 @@ Android Studio
 <li>导入之前的eclipse工程。下面有两种方法，第1种方法是谷歌推荐的，但我试过后报错，用第2种方法成功。<br>(1)安卓官网推荐先在eclipse里将工程export成grade格式，见此：<a href="http://tools.android.com/tech-docs/new-build-system/migrating-from-eclipse-projects" target="_blank">http://tools.android.com/tech-docs/new-build-system/migrating-from-eclipse-projects</a> 顺着此介绍，将工程export成gradle后，再将gradle工程导入Android Studio，发现由于export工程的gradle版本与Studio的gradle版本不同，所以还是导不成功，最后选用方法2。<br>(2)进行下面操作之前，先将工程还原成之前的eclipse工程。Android studio首页右侧有一栏：Import Project(Eclipse ADT, Gradle, etc).点击导入工程，耐心等待，Android Studio会把一切需要配置的配置好。导入完毕以后，可能有一些依赖库未添加进去，根据log提示，google一下，能很快解决。<br><img src="../../../../img/red_as_pgn.png" alt="red_as_pgn"></li>
 </ol>
 <h1 id="Gradle">Gradle</h1>
-<ol>
+<ul>
 <li>安装（linux环境） 上gradle官网<a href="http://gradle.org/gradle-download/" target="_blank">http://gradle.org/gradle-download/</a> 选择一个版本下载。下载完毕后，解压缩。然后配置环境变量，下面是我的配置</li>
-</ol>
+</ul>
 <figure class="highlight"><table><tr><td class="gutter"><pre>1
 2
 3
@@ -110,9 +110,9 @@ Android Studio
 </pre></td></tr></table></figure>
 
 
-<ol>
+<ul>
 <li>学习Gradle。根据自己的学习经历，我觉得分三步：熟悉groovy语法；熟悉Gradle；深入理解Android Studio Gradle plugin。并且在这三步的学习过程中，配合阅读build.gradle文件，理解文件中的代码。<br>1) 熟悉groovy语法。我是找了一篇博客熟悉的。<a href="http://blog.csdn.net/SpiderDog/article/category/2317065" target="_blank">http://blog.csdn.net/SpiderDog/article/category/2317065</a><br>2) 熟悉Gradle。请看这里<a href="http://dongchuan.gitbooks.io/gradle-user-guide-/content/index.html" target="_blank">http://dongchuan.gitbooks.io/gradle-user-guide-/content/index.html</a> 了解以下概念：Project，Tasks，dependencies，plugin。<br>3) 深入理解 Android Studio Gradle plugin。看这里<a href="http://avatarqing.gitbooks.io/gradlepluginuserguidechineseverision/content/introduction/README.html" target="_blank">http://avatarqing.gitbooks.io/gradlepluginuserguidechineseverision/content/introduction/README.html</a> 我是按照下面几步学习Gradle plugin的，（1）对照build.gradle文件，读懂每一行代码 （2）尝试修改BuildTypes：debug release （3）自定义tasks. 下面是一个自定义tasks，功能是调用java命令用系统签名对应用签名 </li>
-</ol>
+</ul>
 <figure class="highlight"><table><tr><td class="gutter"><pre>1
 2
 3
