@@ -4,16 +4,13 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Try Android Studio and Gradle | Michael&#39;s Blog</title>
+    <title>IT杂想 | Michael&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Michael">
     
-    <meta name="description" content="系统环境：Ubuntu 14.04
-Android Studio
-
-安装。官网下载Android Studio（需翻墙），详细教程请见此大牛博客，http://stormzhang.com/
-导入之前的eclipse工程。下面有两种方法，第1种方法是谷歌推荐的，但我试过后报错，用第2种方法成功。(1">
+    <meta name="description" content="这是一篇自勉的文章。
+作为一个Android开发者，我时刻关注着Google这家伟大的公司。最近发生在Google身上的两件大事让我进一步认识了它。第一件大事是Google重组，改名为Alphabet，新Google成为其子公司。对于这条新闻，我看了两条关于它的报道，深深地让我重新认识了这家公司。第">
     
     
     
@@ -70,15 +67,15 @@ Android Studio
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/07/17/try-android-studio-and-gradle/" title="Try Android Studio and Gradle" itemprop="url">Try Android Studio and Gradle</a>
+      <a href="/2015/11/22/it杂想/" title="IT杂想" itemprop="url">IT杂想</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://plus.google.com/100262645697225607342?rel=author" title="Michael" target="_blank" itemprop="author">Michael</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-07-17T10:26:05.000Z" itemprop="datePublished">7月 17 2015</time>
-    更新日期:<time datetime="2015-11-21T14:26:28.000Z" itemprop="dateModified">11月 21 2015</time>
+    <time datetime="2015-11-22T14:53:30.000Z" itemprop="datePublished">11月 22 2015</time>
+    更新日期:<time datetime="2015-11-22T15:11:04.000Z" itemprop="dateModified">11月 22 2015</time>
     
   </p>
 </header>
@@ -87,66 +84,36 @@ Android Studio
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Android_Studio"><span class="toc-number">1.</span> <span class="toc-text">Android Studio</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Gradle"><span class="toc-number">2.</span> <span class="toc-text">Gradle</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#为什么要学习使用Gradle？"><span class="toc-number">3.</span> <span class="toc-text">为什么要学习使用Gradle？</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#技术方向&amp;技术积累"><span class="toc-number">1.</span> <span class="toc-text">技术方向&amp;技术积累</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#平台"><span class="toc-number">2.</span> <span class="toc-text">平台</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#机遇"><span class="toc-number">3.</span> <span class="toc-text">机遇</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#技术信仰"><span class="toc-number">4.</span> <span class="toc-text">技术信仰</span></a></li></ol>
 		</div>
 		
-		<p>系统环境：Ubuntu 14.04</p>
-<h1 id="Android_Studio">Android Studio</h1>
-<ol>
-<li>安装。官网下载Android Studio（需翻墙），详细教程请见此大牛博客，<a href="http://stormzhang.com/" target="_blank">http://stormzhang.com/</a></li>
-<li>导入之前的eclipse工程。下面有两种方法，第1种方法是谷歌推荐的，但我试过后报错，用第2种方法成功。<br>(1)安卓官网推荐先在eclipse里将工程export成grade格式，见此：<a href="http://tools.android.com/tech-docs/new-build-system/migrating-from-eclipse-projects" target="_blank">http://tools.android.com/tech-docs/new-build-system/migrating-from-eclipse-projects</a> 顺着此介绍，将工程export成gradle后，再将gradle工程导入Android Studio，发现由于export工程的gradle版本与Studio的gradle版本不同，所以还是导不成功，最后选用方法2。<br>(2)进行下面操作之前，先将工程还原成之前的eclipse工程。Android studio首页右侧有一栏：Import Project(Eclipse ADT, Gradle, etc).点击导入工程，耐心等待，Android Studio会把一切需要配置的配置好。导入完毕以后，可能有一些依赖库未添加进去，根据log提示，google一下，能很快解决。<br><img src="../../../../img/red_as_pgn.png" alt="red_as_pgn"></li>
-</ol>
-<h1 id="Gradle">Gradle</h1>
-<ul>
-<li>安装（linux环境） 上gradle官网<a href="http://gradle.org/gradle-download/" target="_blank">http://gradle.org/gradle-download/</a> 选择一个版本下载。下载完毕后，解压缩。然后配置环境变量，下面是我的配置</li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre>1
-2
-3
-</pre></td><td class="code"><pre><span class="built_in">sudo</span> vim /etc/profile  
-<span class="keyword">export</span> GRADLE_HOME=/home/michael/gradle 
-<span class="keyword">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$GRADLE_HOME</span>/bin
-</pre></td></tr></table></figure>
-
-
-<ul>
-<li>学习Gradle。根据自己的学习经历，我觉得分三步：熟悉groovy语法；熟悉Gradle；深入理解Android Studio Gradle plugin。并且在这三步的学习过程中，配合阅读build.gradle文件，理解文件中的代码。<br>1) 熟悉groovy语法。我是找了一篇博客熟悉的。<a href="http://blog.csdn.net/SpiderDog/article/category/2317065" target="_blank">http://blog.csdn.net/SpiderDog/article/category/2317065</a><br>2) 熟悉Gradle。请看这里<a href="http://dongchuan.gitbooks.io/gradle-user-guide-/content/index.html" target="_blank">http://dongchuan.gitbooks.io/gradle-user-guide-/content/index.html</a> 了解以下概念：Project，Tasks，dependencies，plugin。<br>3) 深入理解 Android Studio Gradle plugin。看这里<a href="http://avatarqing.gitbooks.io/gradlepluginuserguidechineseverision/content/introduction/README.html" target="_blank">http://avatarqing.gitbooks.io/gradlepluginuserguidechineseverision/content/introduction/README.html</a> 我是按照下面几步学习Gradle plugin的，（1）对照build.gradle文件，读懂每一行代码 （2）尝试修改BuildTypes：debug和release （3）自定义tasks. 下面是一个自定义tasks，功能是调用java命令用系统签名对应用签名 </li>
-</ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre>1
-2
-3
-</pre></td><td class="code"><pre>task sign(<span class="built_in">type</span>: Exec, dependsOn: assembleRelease) {        
-executable <span class="string">"sh"</span>       
-args <span class="string">"-c"</span>, <span class="string">"java -jar signapk.jar platform.x509.pem platform.pk8 app-release-unsigned.apk v<span class="variable">${defaultConfig.versionName}</span>_<span class="variable">${releaseTime()}</span>.apk"</span> }
-</pre></td></tr></table></figure>
-
-
-<h1 id="为什么要学习使用Gradle？">为什么要学习使用Gradle？</h1>
-<ol>
-<li>我们处在一个开源的世界里，经常需要用到github上优秀的开源库，gradle给了我们极其方便使用这些库的方法，只需要一行依赖代码，就自动下载，并配置好。我觉得程序员都应该尝试用gradle构建项目，简介快速地使用开源库，提高开发效率。</li>
-<li>Gradle相对于ant，配置简洁，强大。并且Android Studio完美支持Gradle。</li>
-<li>如果你知道一个开源库的名称但不知道其在gradle的compile名称，请上此网站查找，<a href="http://gradleplease.appspot.com/" target="_blank">http://gradleplease.appspot.com/</a></li>
-</ol>
+		<p>这是一篇自勉的文章。</p>
+<p>作为一个Android开发者，我时刻关注着Google这家伟大的公司。最近发生在Google身上的两件大事让我进一步认识了它。第一件大事是Google重组，改名为Alphabet，新Google成为其子公司。对于这条新闻，我看了两条关于它的报道，深深地让我重新认识了这家公司。第一条新闻标题是：直到Google重组，我才明白Google和百度不止隔着一个太平洋！这篇文章罗列了Google正在研发的那些不可思议的也必将改变世界的项目。第二条是一个视频短片，也是描述了Alphabet公司旗下那些具有伟大创见的创新项目。视频地址：<a href="http://v.youku.com/v_show/id_XMTM0OTc5MzY0MA==.html?f=25853690&amp;from=sub-y1.2-3.4.7" target="_blank">http://v.youku.com/v_show/id_XMTM0OTc5MzY0MA==.html?f=25853690&amp;from=sub-y1.2-3.4.7</a> 。第二件大事是Google开源TensorFlow。官网：<a href="http://tensorflow.org/" target="_blank">http://tensorflow.org/</a> TensorFlow是机器深度学习系统框架，本人对机器智能并不了解，查了一些资料，发现TensorFlow这货确实牛逼，可以应用于很多智能领域。而且，Google的智能技术领先全球，开源将有助于智能领域的发展。</p>
+<p>看到Google这家以不作恶为信条的公司，已经做的和正在做的那些改变世界的事，很震惊，也很兴奋。有Google这家公司作为标杆，我被IT这个行业打动了。Google证明了一件事：不作恶也可以让公司活下去，通过处心积虑地改变世界、改变人们的生活，也能创造一家伟大的公司。</p>
+<p>Google，正在通过技术改变世界。不禁让我思考自己以及我正在从事的工作。我相信，每一个有想法的程序员都想去做一些能改变的事情：做一款好用的App、做一个好玩的智能硬件、利用技术解决社会存在的某些问题、或者改善人们的生活等等。但这些东西不是空有激情就可以做到的。对于程序员来说，如果想做点不一样的事情，有所突破，我觉得对以下几点的选择和把控非常重要（这些东西是我最近一直在思考的）。</p>
+<h6 id="技术方向&amp;技术积累">技术方向&amp;技术积累</h6>
+<p>在讨论技术方向和积累之前，我认为每个程序员应该问问自己：你是不是热爱技术，是否坚信技术能改变世界？是否能坚持投入精力学习？大多数程序员都不是天才，不可能在有限的时间里学到所有的东西。所以选择自己的技术方向非常重要。这一点对于刚毕业的程序员来说比较难。对于工作几年的人来说，我觉得是必须要做的事。你需要去问自己：对于当前研究的技术方向，你是不是感兴趣？它是否代表着未来？你是否愿意钻研遇到的各种疑难杂症？如果这些问题，你的答案是肯定的，那么你很庆幸。当然，我觉得，技术方向也不是永远不变的，新技术、新领域的兴起，可能会让我们改变方向。当我们选择了技术方向，接下来就是技术积累。积累是一个持续的、长时间修炼的过程。你需要投入足够的时间和精力，你要对它有极大的Passion才能克服懒惰。对于一个陌生的技术领域，至少需要相当长一段时间的积累，才能对其理解比较深刻。</p>
+<h6 id="平台">平台</h6>
+<p>工作三年，真心觉得平台太重要了。公司的文化氛围、管理，对产品的认识、对技术的追求，这些东西至关重要。公司的文化氛围和管理很大程度上影响了团队氛围以及团队成员之间的关系。直接影响到每个人的工作热情和积极性。优秀靠谱的产品能激发内心的激情，让人有使命感。技术氛围直接影响到每个程序员的技术成长，决定了是否有足够的激情和技术能力去提升改进产品。我觉得有了几年工作经验的程序员，选择工作的时候，应该对公司和平台比较挑剔。薪水绝不是第一考虑因素。个人认为，好的平台能给程序员带来这些好处：（1）参与开发优秀的产品。（2）有激情，能将技术发挥到最大限度。（3）带动个人技术和能力的快速提升。（4）看到自己的产品被用户使用，反馈好。个人成就感得到极大满足。（5）最后，钱也不会少。</p>
+<h6 id="机遇">机遇</h6>
+<p>机遇很重要。能有一个好平台是机遇，碰到工作上好的导师是机遇。但这些机遇并不是偶然。前段时间读了马尔科姆-格拉德威尔的一本书：异类。其中第一部分花了大量篇幅论述了机遇。关于机遇，作者强调它并非来自于偶然。与家庭背景、所处时代、社会发展、个人努力等等多种因素有关系。其中，提到了著名的一万小时定律：就是在某一领域达到大师级别的水准，需要一万小时以上的刻苦磨练。机会来临，有能力才能把握住。所以，对待机遇最好的办法就是努力准备着。越努力，越幸运。说的就是这个理。</p>
+<h6 id="技术信仰">技术信仰</h6>
+<p>每每想起Google这个公司，我就想到了技术信仰。Google是一家有技术信仰的公司。它坚信技术能改变世界。Google作为互联网公司的风向标，一次又一次地证明了技术改变世界。作为程序员，有幸生在这个时代，看到Google做的每一次改变，何尝不兴奋激动？每一位程序员都应该相信技术的力量。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Gradle/">Gradle</a>
-  </div>
-
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Android studio/">Android studio</a>
+  <a class="article-category-link" href="/categories/思考/">思考</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/Michaelgeek/2015/07/17/try-android-studio-and-gradle/" data-title="Try Android Studio and Gradle | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
+  <div data-url="https://github.com/Michaelgeek/2015/11/22/it杂想/" data-title="IT杂想 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
   </div>
 
 </div>
@@ -155,19 +122,11 @@ args <span class="string">"-c"</span>, <span class="string">"java -jar signapk.j
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/09/16/总结：使用过的优秀开源库或框架/" title="总结：使用过的优秀开源库或框架">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  总结：使用过的优秀开源库或框架</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/05/13/android图片加载库（新）/"  title="Android图片加载库（新）">
+<a href="/2015/11/15/rxjava/"  title="RxJava">
  <strong>NEXT:</strong><br/> 
- <span>Android图片加载库（新）
+ <span>RxJava
 </span>
 </a>
 </div>
@@ -184,7 +143,7 @@ args <span class="string">"-c"</span>, <span class="string">"java -jar signapk.j
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Android_Studio"><span class="toc-number">1.</span> <span class="toc-text">Android Studio</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Gradle"><span class="toc-number">2.</span> <span class="toc-text">Gradle</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#为什么要学习使用Gradle？"><span class="toc-number">3.</span> <span class="toc-text">为什么要学习使用Gradle？</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#技术方向&amp;技术积累"><span class="toc-number">1.</span> <span class="toc-text">技术方向&amp;技术积累</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#平台"><span class="toc-number">2.</span> <span class="toc-text">平台</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#机遇"><span class="toc-number">3.</span> <span class="toc-text">机遇</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#技术信仰"><span class="toc-number">4.</span> <span class="toc-text">技术信仰</span></a></li></ol>
   </div>
 
 <div id="asidepart">
