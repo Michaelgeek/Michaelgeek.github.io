@@ -75,7 +75,7 @@ OkHttp是一款非常优秀的HTTP库，开源的，适用于Android平台。它
     </p>
   <p class="article-time">
     <time datetime="2015-12-13T15:29:39.000Z" itemprop="datePublished">12月 13 2015</time>
-    更新日期:<time datetime="2015-12-13T16:08:45.000Z" itemprop="dateModified">12月 14 2015</time>
+    更新日期:<time datetime="2015-12-14T01:36:29.000Z" itemprop="dateModified">12月 14 2015</time>
     
   </p>
 </header>
@@ -133,8 +133,8 @@ OkHttp是一款非常优秀的HTTP库，开源的，适用于Android平台。它
 </ul>
 </li>
 <li>Locks<br>OkHttp有三种操作需要锁同步。<ul>
-<li>SpdyConnection<br>这个锁保证了每一个Connection内部状态正确。阻塞操作不会持有这个锁。流程是这样的：获取这个锁，对一些fields做读或写操作，然后释放这个锁。没有IO和应用层回调操作。</li>
-<li>SpdyStream<br>这个锁保证了每一个Stream内部状态正确。阻塞操作不会持有这个锁。当应用层线程阻塞在读IO上，OkHttp会调用wait/notify，当wait()被调用，锁会被释放。</li>
+<li>FramedConnection<br>这个锁保证了每一个Connection内部状态正确。阻塞操作不会持有这个锁。流程是这样的：获取这个锁，对一些fields做读或写操作，然后释放这个锁。没有IO和应用层回调操作。</li>
+<li>FramedStream<br>这个锁保证了每一个Stream内部状态正确。阻塞操作不会持有这个锁。当应用层线程阻塞在读IO上，OkHttp会调用wait/notify，当wait()被调用，锁会被释放。</li>
 <li>FrameWriter<br>这个锁保证了socket写状态的正确。某一时刻，仅有一个stream可以向socket写数据。要么是上层线程或者Do-stuff-later pool线程执行写操作。</li>
 <li>同时持有多个锁<br>在持有FrameWriter锁的前提下，可以同时持有SpdyConnection的锁。但反过来不可以，因为去持有FrameWriter锁会阻塞导致SpdyConnection锁被释放掉。</li>
 </ul>
