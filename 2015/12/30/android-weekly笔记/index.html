@@ -4,15 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>浅析Android apk的运行过程、消息机制及线程 | Michael&#39;s Blog</title>
+    <title>Android Weekly笔记 | Michael&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Michael">
     
-    <meta name="description" content="基础
-要介绍一个AP的运行过程，首先需要介绍一下Android Framework的框架框架包含三个主要部分：服务端，客户端（.apk）和Linux驱动Binder，如下图。
-服务端
-服务端包含两个重要类，ActivityManagerService（AmS）和WindowManagerServic">
+    <meta name="description" content="看过的东西一定要做笔记！无笔记等于白看。这个笔记会持续更新。就这样！
+
+184期
+android-s-multidex-slows-down-app-startup https://medium.com/groupon-eng/android-s-multidex-slows-down-app-st">
     
     
     
@@ -69,15 +69,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2013/10/19/android-apk的运行过程、消息机制及线程/" title="浅析Android apk的运行过程、消息机制及线程" itemprop="url">浅析Android apk的运行过程、消息机制及线程</a>
+      <a href="/2015/12/30/android-weekly笔记/" title="Android Weekly笔记" itemprop="url">Android Weekly笔记</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://plus.google.com/100262645697225607342?rel=author" title="Michael" target="_blank" itemprop="author">Michael</a>
     </p>
   <p class="article-time">
-    <time datetime="2013-10-19T14:08:30.000Z" itemprop="datePublished">10月 19 2013</time>
-    更新日期:<time datetime="2015-12-30T14:37:38.000Z" itemprop="dateModified">12月 30 2015</time>
+    <time datetime="2015-12-30T14:49:37.000Z" itemprop="datePublished">12月 30 2015</time>
+    更新日期:<time datetime="2015-12-30T14:56:25.000Z" itemprop="dateModified">12月 30 2015</time>
     
   </p>
 </header>
@@ -86,50 +86,39 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#基础"><span class="toc-number">1.</span> <span class="toc-text">基础</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#服务端"><span class="toc-number">2.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#客户端"><span class="toc-number">3.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux驱动Binder"><span class="toc-number">4.</span> <span class="toc-text">Linux驱动Binder</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#APK程序的运行过程"><span class="toc-number">5.</span> <span class="toc-text">APK程序的运行过程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#消息机制："><span class="toc-number">6.</span> <span class="toc-text">消息机制：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#线程"><span class="toc-number">7.</span> <span class="toc-text">线程</span></a></li></ol>
+		
 		</div>
 		
-		<h6 id="基础">基础</h6>
-<p>要介绍一个AP的运行过程，首先需要介绍一下Android Framework的框架<br>框架包含三个主要部分：服务端，客户端（.apk）和Linux驱动Binder，如下图。<br><img src="../../../../img/APK_Framework_Structure.jpg" alt="APK_Framework_Structure"></p>
-<h6 id="服务端">服务端</h6>
-<p>服务端包含两个重要类，ActivityManagerService（AmS）和WindowManagerService（WmS）。</p>
+		<p>看过的东西一定要做笔记！无笔记等于白看。这个笔记会持续更新。就这样！</p>
 <ul>
-<li>AmS主要是负责管理所有应用程序中的Activity。</li>
-<li>WmS的作用是为所有的应用程序分配窗口，并管理这些窗口。包括分配窗口的大小，调节各窗口的叠放次序，隐藏或显示窗口。此外，WmS包括两个消息处理类：KeyQ类和InputDispatcherThread类。keyQ对象建立后，会启动一个线程，不断的读取用户的UI操作信息，比如触摸屏，按键等，并把这些消息放入消息队列QueueEvent类中；InputDispatcherThread对象建立后，也会立即启动一个线程，该线程不断地从 QueueEvent中取出用户信息，并进行一定的过滤，过滤后，再将这些信息发送给当前活动的客户端程序。</li>
-</ul>
-<h6 id="客户端">客户端</h6>
-<p>客户端就是Android应用程序apk，客户端包括一些重要的类。</p>
-<ul>
-<li>ActivityThread类：该类为应用程序的主线程类，所有的apk程序都有且仅有一个ActivityThread类，程序的入口是该类中的static main()函数。</li>
-<li>Activity类：该类为api程序的一个最小运行单元，一个apk程序中可以包含多个Activity对象，ActivityThread主类会根据用户操作选择运行哪个Activity对象。</li>
-<li>ApplicationThread类：该类主要是负责与AmS通信，接受远程AmS的IPC调用。</li>
-<li>W类：该类主要负责与WmS通信，接收远程远程WmS的IPC调用。</li>
-</ul>
-<h6 id="Linux驱动Binder">Linux驱动Binder</h6>
-<p>Binder驱动的作用是提供跨进程的消息传递。</p>
-<h6 id="APK程序的运行过程">APK程序的运行过程</h6>
-<ol>
-<li>某一个APK程序启动时，从类ActivityThread类的静态函数main()开始执行。</li>
-<li>调用prepareMainLooper()为UI线程创建一个消息队列：MessageQueue。</li>
-<li>创建一个ActivityThread对象，创建对象过程中，会创建一个Handler对象H和ApplicationThread对象（此对象负责与AmS通信）。</li>
-<li>UI主线程调用Looper.loop()方法进入消息循环体，此时，程序已经跑起来了，UI线程不断地从消息队列里读取消息并处理消息。</li>
-<li>当客户端接收AmS发送的消息，需要启动一个Activity时，客户端会创建一个Activity对象，接下来会做一些界面的创建工作；在创建完界面后，需要将界面显示到屏幕上，于是，调用WindowManager类，WindowManager创建一个ViewRoot对象（继承自Handler，本质就是Handler）和W类的对象（此对象负责与WmS通信），再调用WmS提供的远程接口完成添加一个窗口并显示到屏幕上。</li>
-</ol>
-<h6 id="消息机制：">消息机制：</h6>
-<ul>
-<li>消息进入MessageQueue<ul>
-<li>ApplicationThread对象本质是一个线程，负责与AmS通信，获得AmS的消息后，通过主线程的Handler对象H将消息发送到MessageQueue。</li>
-<li>W类对象本质也是一个线程，负责与WmS通信，获得WmS的消息后，通过ViewRoot对象（本质是Handler）将消息发送到MessageQueue。</li>
+<li>184期<ul>
+<li>android-s-multidex-slows-down-app-startup <a href="https://medium.com/groupon-eng/android-s-multidex-slows-down-app-startup-d9f10b46770f#.rjzelys9a" target="_blank">https://medium.com/groupon-eng/android-s-multidex-slows-down-app-startup-d9f10b46770f#.rjzelys9a</a> apk方法数超过65k，android5.0之前默认不支持的，需要使用multidex库才能支持。android5.0以后，ART默认支持。但在使用multidex过程中，会增加app启动时间。这篇文章就是讲述在使用multidex时，如何优化启动时间。</li>
+<li>analyze-manage-android-devices-memory-allocation-through-ddms-mat <a href="https://acadgild.com/blog/analyze-manage-android-devices-memory-allocation-through-ddms-mat/" target="_blank">https://acadgild.com/blog/analyze-manage-android-devices-memory-allocation-through-ddms-mat/</a> 介绍Android开发中，1，如何避免内存泄露：避免长时间持有Activity的Context引用；尽可能用ApplicationContext代替Activity的Context；避免使用内部类，尽可能使用静态内部类，并且静态内部类对Activity的引用设为弱引用；垃圾收集器不能避免内存溢出。2，使用Allocation Tracker和MAT分析内存使用和泄露状况。</li>
 </ul>
 </li>
-<li>消息处理<ol>
-<li>程序中有一个消息队列MessageQueue，UI线程进入Loop循环，不断从消息队列中读取消息处理消息。</li>
-<li>Looper从MessageQueue取出消息msg，调用消息的msg.target.dispatchMessage(msg)来让消息指定的Handler处理消息，本质就是那个Handler发送消息，这个消息就是哪个Handler来处理。</li>
-</ol>
+<li>182期<ul>
+<li>effective-okhttp <a href="http://omgitsmgp.com/2015/12/02/effective-okhttp/" target="_blank">http://omgitsmgp.com/2015/12/02/effective-okhttp/</a> 讲述高效使用okhttp库。</li>
+</ul>
+</li>
+<li>181期<ul>
+<li>图片裁剪库，scissors，由lyft公司发布。 <a href="https://eng.lyft.com/scissors-an-image-cropping-library-for-android-a56369154a19#.7amvfosbr" target="_blank">https://eng.lyft.com/scissors-an-image-cropping-library-for-android-a56369154a19#.7amvfosbr</a> github地址：<a href="https://github.com/lyft/scissors" target="_blank">https://github.com/lyft/scissors</a></li>
+</ul>
+</li>
+<li>178期<ul>
+<li>定制windows background，使app在冷启动时，看起来更快。<a href="https://plus.google.com/105148560373589648355/posts/V3Tp6xxUWHH" target="_blank">https://plus.google.com/105148560373589648355/posts/V3Tp6xxUWHH</a> github地址：<a href="https://github.com/DreaminginCodeZH/MaterialColdStart" target="_blank">https://github.com/DreaminginCodeZH/MaterialColdStart</a></li>
+</ul>
+</li>
+<li>177期<ul>
+<li>getting-started-with-rxjava-and-android 入门级介绍如何在android中使用rxjava <a href="http://www.captechconsulting.com/blogs/getting-started-with-rxjava-and-android" target="_blank">http://www.captechconsulting.com/blogs/getting-started-with-rxjava-and-android</a></li>
+<li>android依赖注入入门。 <a href="http://tech.just-eat.com/2015/10/26/dependency-injection-on-android/" target="_blank">http://tech.just-eat.com/2015/10/26/dependency-injection-on-android/</a></li>
+</ul>
+</li>
+<li>176期<ul>
+<li>using-hardware-layers-to-improve-animation-performance 使用hardware layer提高动画的绘制性能 <a href="http://blog.danlew.net/2015/10/20/using-hardware-layers-to-improve-animation-performance/" target="_blank">http://blog.danlew.net/2015/10/20/using-hardware-layers-to-improve-animation-performance/</a></li>
+<li>Build a Material Design App with the Android Design Support Library 介绍如何使用Android Design Support Library开发app。地址：<a href="https://codelabs.developers.google.com/codelabs/material-design-style/index.html?index=..%2F..%2Findex#0" target="_blank">https://codelabs.developers.google.com/codelabs/material-design-style/index.html?index=..%2F..%2Findex#0</a>  谷歌官方博客对Android Design Support Library的使用介绍：<a href="http://android-developers.blogspot.co.ke/2015/05/android-design-support-library.html" target="_blank">http://android-developers.blogspot.co.ke/2015/05/android-design-support-library.html</a> </li>
+</ul>
 </li>
 </ul>
-<h6 id="线程">线程</h6>
-<p>一个Android程序运行，至少存在3个线程：UI线程，与AmS通信的线程（ApplicationThread对象），与WmS通信的线程（W类对象）.</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -144,7 +133,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/Michaelgeek/2013/10/19/android-apk的运行过程、消息机制及线程/" data-title="浅析Android apk的运行过程、消息机制及线程 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
+  <div data-url="https://github.com/Michaelgeek/2015/12/30/android-weekly笔记/" data-title="Android Weekly笔记 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
   </div>
 
 </div>
@@ -153,19 +142,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/07/10/开篇/" title="开篇">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  开篇</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2012/03/29/android基于http的两种常用通信方式/"  title="Android基于HTTP的两种常用通信方式">
+<a href="/2015/12/13/okhttp源码解析/"  title="OkHttp源码解析">
  <strong>NEXT:</strong><br/> 
- <span>Android基于HTTP的两种常用通信方式
+ <span>OkHttp源码解析
 </span>
 </a>
 </div>
@@ -182,7 +163,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#基础"><span class="toc-number">1.</span> <span class="toc-text">基础</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#服务端"><span class="toc-number">2.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#客户端"><span class="toc-number">3.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux驱动Binder"><span class="toc-number">4.</span> <span class="toc-text">Linux驱动Binder</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#APK程序的运行过程"><span class="toc-number">5.</span> <span class="toc-text">APK程序的运行过程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#消息机制："><span class="toc-number">6.</span> <span class="toc-text">消息机制：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#线程"><span class="toc-number">7.</span> <span class="toc-text">线程</span></a></li></ol>
+  
   </div>
 
 <div id="asidepart">
