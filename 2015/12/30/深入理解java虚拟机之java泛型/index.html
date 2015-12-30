@@ -4,13 +4,14 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>IT杂想 | Michael&#39;s Blog</title>
+    <title>深入理解Java虚拟机之Java泛型--读书笔记 | Michael&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Michael">
     
-    <meta name="description" content="这是一篇自勉的文章。
-作为一个Android开发者，我时刻关注着Google这家伟大的公司。最近发生在Google身上的两件大事让我进一步认识了它。第一件大事是Google重组，改名为Alphabet，新Google成为其子公司。对于这条新闻，我看了两条关于它的报道，深深地让我重新认识了这家公司。第">
+    <meta name="description" content="这是《深入理解Java虚拟机第二版》的读书笔记。其中，通过反射获取泛型信息，是学习自这篇文章：http://tutorials.jenkov.com/java-reflection/generics.html 
+什么是泛型？
+泛型是JDK 1.5的一项新增特性，它的本质是参数化类型（Paramete">
     
     
     
@@ -67,15 +68,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/22/it杂想/" title="IT杂想" itemprop="url">IT杂想</a>
+      <a href="/2015/12/30/深入理解java虚拟机之java泛型/" title="深入理解Java虚拟机之Java泛型--读书笔记" itemprop="url">深入理解Java虚拟机之Java泛型--读书笔记</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://plus.google.com/100262645697225607342?rel=author" title="Michael" target="_blank" itemprop="author">Michael</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-11-22T14:53:30.000Z" itemprop="datePublished">11月 22 2015</time>
-    更新日期:<time datetime="2015-11-22T15:11:04.000Z" itemprop="dateModified">11月 22 2015</time>
+    <time datetime="2015-12-30T15:09:28.000Z" itemprop="datePublished">12月 30 2015</time>
+    更新日期:<time datetime="2015-12-30T15:15:24.000Z" itemprop="dateModified">12月 30 2015</time>
     
   </p>
 </header>
@@ -84,21 +85,138 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#技术方向&amp;技术积累"><span class="toc-number">1.</span> <span class="toc-text">技术方向&amp;技术积累</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#平台"><span class="toc-number">2.</span> <span class="toc-text">平台</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#机遇"><span class="toc-number">3.</span> <span class="toc-text">机遇</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#技术信仰"><span class="toc-number">4.</span> <span class="toc-text">技术信仰</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#什么是泛型？"><span class="toc-number">1.</span> <span class="toc-text">什么是泛型？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#泛型实现"><span class="toc-number">2.</span> <span class="toc-text">泛型实现</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#获取泛型的参数化类型"><span class="toc-number">3.</span> <span class="toc-text">获取泛型的参数化类型</span></a></li></ol>
 		</div>
 		
-		<p>这是一篇自勉的文章。</p>
-<p>作为一个Android开发者，我时刻关注着Google这家伟大的公司。最近发生在Google身上的两件大事让我进一步认识了它。第一件大事是Google重组，改名为Alphabet，新Google成为其子公司。对于这条新闻，我看了两条关于它的报道，深深地让我重新认识了这家公司。第一条新闻标题是：直到Google重组，我才明白Google和百度不止隔着一个太平洋！这篇文章罗列了Google正在研发的那些不可思议的也必将改变世界的项目。第二条是一个视频短片，也是描述了Alphabet公司旗下那些具有伟大创见的创新项目。视频地址：<a href="http://v.youku.com/v_show/id_XMTM0OTc5MzY0MA==.html?f=25853690&amp;from=sub-y1.2-3.4.7" target="_blank">http://v.youku.com/v_show/id_XMTM0OTc5MzY0MA==.html?f=25853690&amp;from=sub-y1.2-3.4.7</a> 。第二件大事是Google开源TensorFlow。官网：<a href="http://tensorflow.org/" target="_blank">http://tensorflow.org/</a> TensorFlow是机器深度学习系统框架，本人对机器智能并不了解，查了一些资料，发现TensorFlow这货确实牛逼，可以应用于很多智能领域。而且，Google的智能技术领先全球，开源将有助于智能领域的发展。</p>
-<p>看到Google这家以不作恶为信条的公司，已经做的和正在做的那些改变世界的事，很震惊，也很兴奋。有Google这家公司作为标杆，我被IT这个行业打动了。Google证明了一件事：不作恶也可以让公司活下去，通过处心积虑地改变世界、改变人们的生活，也能创造一家伟大的公司。</p>
-<p>Google，正在通过技术改变世界。不禁让我思考自己以及我正在从事的工作。我相信，每一个有想法的程序员都想去做一些能改变的事情：做一款好用的App、做一个好玩的智能硬件、利用技术解决社会存在的某些问题、或者改善人们的生活等等。但这些东西不是空有激情就可以做到的。对于程序员来说，如果想做点不一样的事情，有所突破，我觉得对以下几点的选择和把控非常重要（这些东西是我最近一直在思考的）。</p>
-<h6 id="技术方向&amp;技术积累">技术方向&amp;技术积累</h6>
-<p>在讨论技术方向和积累之前，我认为每个程序员应该问问自己：你是不是热爱技术，是否坚信技术能改变世界？是否能坚持投入精力学习？大多数程序员都不是天才，不可能在有限的时间里学到所有的东西。所以选择自己的技术方向非常重要。这一点对于刚毕业的程序员来说比较难。对于工作几年的人来说，我觉得是必须要做的事。你需要去问自己：对于当前研究的技术方向，你是不是感兴趣？它是否代表着未来？你是否愿意钻研遇到的各种疑难杂症？如果这些问题，你的答案是肯定的，那么你很庆幸。当然，我觉得，技术方向也不是永远不变的，新技术、新领域的兴起，可能会让我们改变方向。当我们选择了技术方向，接下来就是技术积累。积累是一个持续的、长时间修炼的过程。你需要投入足够的时间和精力，你要对它有极大的Passion才能克服懒惰。对于一个陌生的技术领域，至少需要相当长一段时间的积累，才能对其理解比较深刻。</p>
-<h6 id="平台">平台</h6>
-<p>工作三年，真心觉得平台太重要了。公司的文化氛围、管理，对产品的认识、对技术的追求，这些东西至关重要。公司的文化氛围和管理很大程度上影响了团队氛围以及团队成员之间的关系。直接影响到每个人的工作热情和积极性。优秀靠谱的产品能激发内心的激情，让人有使命感。技术氛围直接影响到每个程序员的技术成长，决定了是否有足够的激情和技术能力去提升改进产品。我觉得有了几年工作经验的程序员，选择工作的时候，应该对公司和平台比较挑剔。薪水绝不是第一考虑因素。个人认为，好的平台能给程序员带来这些好处：（1）参与开发优秀的产品。（2）有激情，能将技术发挥到最大限度。（3）带动个人技术和能力的快速提升。（4）看到自己的产品被用户使用，反馈好。个人成就感得到极大满足。（5）最后，钱也不会少。</p>
-<h6 id="机遇">机遇</h6>
-<p>机遇很重要。能有一个好平台是机遇，碰到工作上好的导师是机遇。但这些机遇并不是偶然。前段时间读了马尔科姆-格拉德威尔的一本书：异类。其中第一部分花了大量篇幅论述了机遇。关于机遇，作者强调它并非来自于偶然。与家庭背景、所处时代、社会发展、个人努力等等多种因素有关系。其中，提到了著名的一万小时定律：就是在某一领域达到大师级别的水准，需要一万小时以上的刻苦磨练。机会来临，有能力才能把握住。所以，对待机遇最好的办法就是努力准备着。越努力，越幸运。说的就是这个理。</p>
-<h6 id="技术信仰">技术信仰</h6>
-<p>每每想起Google这个公司，我就想到了技术信仰。Google是一家有技术信仰的公司。它坚信技术能改变世界。Google作为互联网公司的风向标，一次又一次地证明了技术改变世界。作为程序员，有幸生在这个时代，看到Google做的每一次改变，何尝不兴奋激动？每一位程序员都应该相信技术的力量。</p>
+		<p>这是《深入理解Java虚拟机第二版》的读书笔记。其中，通过反射获取泛型信息，是学习自这篇文章：<a href="http://tutorials.jenkov.com/java-reflection/generics.html" target="_blank">http://tutorials.jenkov.com/java-reflection/generics.html</a> </p>
+<h6 id="什么是泛型？">什么是泛型？</h6>
+<p>泛型是JDK 1.5的一项新增特性，它的本质是参数化类型（Parameterized Type）的应用，也就是说所操作的数据类型被指定为一个参数。这种参数类型可以用在类、接口和方法的创建中，分别称为泛型类、泛型接口和泛型方法。使用泛型的场景：1，声明一个需要被参数化（parameterizable）的类/接口。2，使用一个参数化类。</p>
+<h6 id="泛型实现">泛型实现</h6>
+<p>Java语言中的泛型只在程序源码中存在，在编译后的字节码文件中，就已经替换为原来的原生类型（Raw Type，也称为裸类型）了，并且在相应的地方插入了强制转型代码，因此，对于运行期的Java语言来说，ArrayList<int>与Ar-rayList<String>就是同一个类，所以泛型技术实际上是Java语言的一颗语法糖，Java语言中的泛型实现方法称为类型擦除，基于这种方法实现的泛型称为伪泛型。</p>
+<h6 id="获取泛型的参数化类型">获取泛型的参数化类型</h6>
+<ul>
+<li>由于Java泛型的引入，各种场景（虚拟机解析、反射等）下的方法调用都可能对原有的基础产生影响和新的需求，如在泛型类中如何获取传入的参数化类型等。因此，JCP组织对虚拟机规范做出了相应的修改，引入了诸如Signature、LocalVari-ableTypeTable等新的属性用于解决伴随泛型而来的参数类型的识别问题，Signature是其中最重要的一项属性，它的作用就是存储一个方法在字节码层面的特征签名，这个属性中保存的参数类型并不是原生类型，而是包括了参数化类型的信息。</li>
+<li>另外，从Signature属性的出现我们还可以得出结论，擦除法所谓的擦除，仅仅是对方法的Code属性中的字节码进行擦除，实际上元数据中还是保留了泛型信息，这也是我们能通过反射手段取得参数化类型的根本依据。</li>
+</ul>
+<p>四、代码示例，运行期通过反射获取泛型信息</p>
+<ul>
+<li>方法返回值是泛型对象<br>下面的代码，是当返回值是泛型对象时，在运行期获取泛型信息的一个例子。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre></td><td class="code"><pre><span class="keyword">public</span> <span class="keyword">class</span> MyClass <span class="comment">{
+  protected List&lt;String&gt; stringList = ...;
+  public List&lt;String&gt; getStringList(){
+    return this.stringList;
+  }</span>
+}
+
+<span class="function"><span class="keyword">Method</span> <span class="title">method</span> = <span class="title">MyClass</span>.<span class="title">class</span>.<span class="title">getMethod</span><span class="params">("getStringList", null)</span>;</span>
+<span class="keyword">Type</span> returnType = <span class="function"><span class="keyword">method</span>.<span class="title">getGenericReturnType</span><span class="params">()</span>;</span>
+<span class="keyword">if</span>(returnType instanceof ParameterizedType)<span class="comment">{
+    ParameterizedType type = (ParameterizedType) returnType;
+    Type[] typeArguments = type.getActualTypeArguments();
+    for(Type typeArgument : typeArguments){
+        Class typeArgClass = (Class) typeArgument;
+        System.out.println("typeArgClass = " + typeArgClass);
+    }</span>
+}
+</pre></td></tr></table></figure>
+
+
+<ul>
+<li>方法参数是泛型对象<br>下面代码，是当参数是泛型对象时，获取泛型信息的例子.</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="code"><pre><span class="keyword">public</span> <span class="keyword">class</span> MyClass <span class="comment">{
+  protected List&lt;String&gt; stringList = ...;
+  public void setStringList(List&lt;String&gt; list){
+    this.stringList = list;
+  }</span>
+}
+
+<span class="function"><span class="keyword">method</span> = <span class="title">Myclass</span>.<span class="title">class</span>.<span class="title">getMethod</span><span class="params">("setStringList", List.<span class="keyword">class</span>)</span>;</span>
+<span class="keyword">Type</span>[] genericParameterTypes = <span class="function"><span class="keyword">method</span>.<span class="title">getGenericParameterTypes</span><span class="params">()</span>;</span>
+<span class="keyword">for</span>(<span class="keyword">Type</span> genericParameterType : genericParameterTypes)<span class="comment">{
+    if(genericParameterType instanceof ParameterizedType){
+        ParameterizedType aType = (ParameterizedType) genericParameterType;
+        Type[] parameterArgTypes = aType.getActualTypeArguments();
+        for(Type parameterArgType : parameterArgTypes){
+            Class parameterArgClass = (Class) parameterArgType;
+            System.out.println("parameterArgClass = " + parameterArgClass);
+        }</span>
+    }
+}
+</pre></td></tr></table></figure>
+
+
+<ul>
+<li>字段是泛型对象<br>下面代码，是当字段的类型是泛型类时，获取泛型信息的例子。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="code"><pre>public class MyClass {
+  public List&lt;String&gt; stringList = <span class="keyword">...</span>;
+}
+
+Field field = MyClass.class.getField(<span class="string">"stringList"</span>);
+Type genericFieldType = field.getGenericType();
+<span class="keyword">if</span>(genericFieldType instanceof ParameterizedType){
+    ParameterizedType aType = (ParameterizedType) genericFieldType;
+    Type[] fieldArgTypes = aType.getActualTypeArguments();
+    <span class="keyword">for</span>(Type fieldArgType : fieldArgTypes){
+        Class fieldArgClass = (Class) fieldArgType;
+        System.out.println(<span class="string">"fieldArgClass = "</span> + fieldArgClass);
+    }
+}
+</pre></td></tr></table></figure>
+
+
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -106,14 +224,14 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/思考/">思考</a>
+  <a class="article-category-link" href="/categories/Java/">Java</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/Michaelgeek/2015/11/22/it杂想/" data-title="IT杂想 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
+  <div data-url="https://github.com/Michaelgeek/2015/12/30/深入理解java虚拟机之java泛型/" data-title="深入理解Java虚拟机之Java泛型--读书笔记 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
   </div>
 
 </div>
@@ -122,19 +240,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/12/13/okhttp源码解析/" title="OkHttp源码解析">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  OkHttp源码解析</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/11/15/rxjava/"  title="RxJava">
+<a href="/2015/12/30/android-weekly笔记/"  title="Android Weekly笔记">
  <strong>NEXT:</strong><br/> 
- <span>RxJava
+ <span>Android Weekly笔记
 </span>
 </a>
 </div>
@@ -151,7 +261,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#技术方向&amp;技术积累"><span class="toc-number">1.</span> <span class="toc-text">技术方向&amp;技术积累</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#平台"><span class="toc-number">2.</span> <span class="toc-text">平台</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#机遇"><span class="toc-number">3.</span> <span class="toc-text">机遇</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#技术信仰"><span class="toc-number">4.</span> <span class="toc-text">技术信仰</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#什么是泛型？"><span class="toc-number">1.</span> <span class="toc-text">什么是泛型？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#泛型实现"><span class="toc-number">2.</span> <span class="toc-text">泛型实现</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#获取泛型的参数化类型"><span class="toc-number">3.</span> <span class="toc-text">获取泛型的参数化类型</span></a></li></ol>
   </div>
 
 <div id="asidepart">
