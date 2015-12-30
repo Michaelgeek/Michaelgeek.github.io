@@ -4,13 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>IT杂想 | Michael&#39;s Blog</title>
+    <title>浅析Android apk的运行过程、消息机制及线程 | Michael&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Michael">
     
-    <meta name="description" content="这是一篇自勉的文章。
-作为一个Android开发者，我时刻关注着Google这家伟大的公司。最近发生在Google身上的两件大事让我进一步认识了它。第一件大事是Google重组，改名为Alphabet，新Google成为其子公司。对于这条新闻，我看了两条关于它的报道，深深地让我重新认识了这家公司。第">
+    <meta name="description" content="基础
+要介绍一个AP的运行过程，首先需要介绍一下Android Framework的框架框架包含三个主要部分：服务端，客户端（.apk）和Linux驱动Binder，如下图。
+服务端
+服务端包含两个重要类，ActivityManagerService（AmS）和WindowManagerServic">
     
     
     
@@ -67,15 +69,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/22/it杂想/" title="IT杂想" itemprop="url">IT杂想</a>
+      <a href="/2013/10/19/android-apk的运行过程、消息机制及线程/" title="浅析Android apk的运行过程、消息机制及线程" itemprop="url">浅析Android apk的运行过程、消息机制及线程</a>
   </h1>
   <p class="article-author">By
     
       <a href="https://plus.google.com/100262645697225607342?rel=author" title="Michael" target="_blank" itemprop="author">Michael</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-11-22T14:53:30.000Z" itemprop="datePublished">11月 22 2015</time>
-    更新日期:<time datetime="2015-11-22T15:11:04.000Z" itemprop="dateModified">11月 22 2015</time>
+    <time datetime="2013-10-19T14:08:30.000Z" itemprop="datePublished">10月 19 2013</time>
+    更新日期:<time datetime="2015-12-30T14:37:38.000Z" itemprop="dateModified">12月 30 2015</time>
     
   </p>
 </header>
@@ -84,21 +86,50 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#技术方向&amp;技术积累"><span class="toc-number">1.</span> <span class="toc-text">技术方向&amp;技术积累</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#平台"><span class="toc-number">2.</span> <span class="toc-text">平台</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#机遇"><span class="toc-number">3.</span> <span class="toc-text">机遇</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#技术信仰"><span class="toc-number">4.</span> <span class="toc-text">技术信仰</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#基础"><span class="toc-number">1.</span> <span class="toc-text">基础</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#服务端"><span class="toc-number">2.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#客户端"><span class="toc-number">3.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux驱动Binder"><span class="toc-number">4.</span> <span class="toc-text">Linux驱动Binder</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#APK程序的运行过程"><span class="toc-number">5.</span> <span class="toc-text">APK程序的运行过程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#消息机制："><span class="toc-number">6.</span> <span class="toc-text">消息机制：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#线程"><span class="toc-number">7.</span> <span class="toc-text">线程</span></a></li></ol>
 		</div>
 		
-		<p>这是一篇自勉的文章。</p>
-<p>作为一个Android开发者，我时刻关注着Google这家伟大的公司。最近发生在Google身上的两件大事让我进一步认识了它。第一件大事是Google重组，改名为Alphabet，新Google成为其子公司。对于这条新闻，我看了两条关于它的报道，深深地让我重新认识了这家公司。第一条新闻标题是：直到Google重组，我才明白Google和百度不止隔着一个太平洋！这篇文章罗列了Google正在研发的那些不可思议的也必将改变世界的项目。第二条是一个视频短片，也是描述了Alphabet公司旗下那些具有伟大创见的创新项目。视频地址：<a href="http://v.youku.com/v_show/id_XMTM0OTc5MzY0MA==.html?f=25853690&amp;from=sub-y1.2-3.4.7" target="_blank">http://v.youku.com/v_show/id_XMTM0OTc5MzY0MA==.html?f=25853690&amp;from=sub-y1.2-3.4.7</a> 。第二件大事是Google开源TensorFlow。官网：<a href="http://tensorflow.org/" target="_blank">http://tensorflow.org/</a> TensorFlow是机器深度学习系统框架，本人对机器智能并不了解，查了一些资料，发现TensorFlow这货确实牛逼，可以应用于很多智能领域。而且，Google的智能技术领先全球，开源将有助于智能领域的发展。</p>
-<p>看到Google这家以不作恶为信条的公司，已经做的和正在做的那些改变世界的事，很震惊，也很兴奋。有Google这家公司作为标杆，我被IT这个行业打动了。Google证明了一件事：不作恶也可以让公司活下去，通过处心积虑地改变世界、改变人们的生活，也能创造一家伟大的公司。</p>
-<p>Google，正在通过技术改变世界。不禁让我思考自己以及我正在从事的工作。我相信，每一个有想法的程序员都想去做一些能改变的事情：做一款好用的App、做一个好玩的智能硬件、利用技术解决社会存在的某些问题、或者改善人们的生活等等。但这些东西不是空有激情就可以做到的。对于程序员来说，如果想做点不一样的事情，有所突破，我觉得对以下几点的选择和把控非常重要（这些东西是我最近一直在思考的）。</p>
-<h6 id="技术方向&amp;技术积累">技术方向&amp;技术积累</h6>
-<p>在讨论技术方向和积累之前，我认为每个程序员应该问问自己：你是不是热爱技术，是否坚信技术能改变世界？是否能坚持投入精力学习？大多数程序员都不是天才，不可能在有限的时间里学到所有的东西。所以选择自己的技术方向非常重要。这一点对于刚毕业的程序员来说比较难。对于工作几年的人来说，我觉得是必须要做的事。你需要去问自己：对于当前研究的技术方向，你是不是感兴趣？它是否代表着未来？你是否愿意钻研遇到的各种疑难杂症？如果这些问题，你的答案是肯定的，那么你很庆幸。当然，我觉得，技术方向也不是永远不变的，新技术、新领域的兴起，可能会让我们改变方向。当我们选择了技术方向，接下来就是技术积累。积累是一个持续的、长时间修炼的过程。你需要投入足够的时间和精力，你要对它有极大的Passion才能克服懒惰。对于一个陌生的技术领域，至少需要相当长一段时间的积累，才能对其理解比较深刻。</p>
-<h6 id="平台">平台</h6>
-<p>工作三年，真心觉得平台太重要了。公司的文化氛围、管理，对产品的认识、对技术的追求，这些东西至关重要。公司的文化氛围和管理很大程度上影响了团队氛围以及团队成员之间的关系。直接影响到每个人的工作热情和积极性。优秀靠谱的产品能激发内心的激情，让人有使命感。技术氛围直接影响到每个程序员的技术成长，决定了是否有足够的激情和技术能力去提升改进产品。我觉得有了几年工作经验的程序员，选择工作的时候，应该对公司和平台比较挑剔。薪水绝不是第一考虑因素。个人认为，好的平台能给程序员带来这些好处：（1）参与开发优秀的产品。（2）有激情，能将技术发挥到最大限度。（3）带动个人技术和能力的快速提升。（4）看到自己的产品被用户使用，反馈好。个人成就感得到极大满足。（5）最后，钱也不会少。</p>
-<h6 id="机遇">机遇</h6>
-<p>机遇很重要。能有一个好平台是机遇，碰到工作上好的导师是机遇。但这些机遇并不是偶然。前段时间读了马尔科姆-格拉德威尔的一本书：异类。其中第一部分花了大量篇幅论述了机遇。关于机遇，作者强调它并非来自于偶然。与家庭背景、所处时代、社会发展、个人努力等等多种因素有关系。其中，提到了著名的一万小时定律：就是在某一领域达到大师级别的水准，需要一万小时以上的刻苦磨练。机会来临，有能力才能把握住。所以，对待机遇最好的办法就是努力准备着。越努力，越幸运。说的就是这个理。</p>
-<h6 id="技术信仰">技术信仰</h6>
-<p>每每想起Google这个公司，我就想到了技术信仰。Google是一家有技术信仰的公司。它坚信技术能改变世界。Google作为互联网公司的风向标，一次又一次地证明了技术改变世界。作为程序员，有幸生在这个时代，看到Google做的每一次改变，何尝不兴奋激动？每一位程序员都应该相信技术的力量。</p>
+		<h6 id="基础">基础</h6>
+<p>要介绍一个AP的运行过程，首先需要介绍一下Android Framework的框架<br>框架包含三个主要部分：服务端，客户端（.apk）和Linux驱动Binder，如下图。<br><img src="../../../../img/APK_Framework_Structure.jpg" alt="APK_Framework_Structure"></p>
+<h6 id="服务端">服务端</h6>
+<p>服务端包含两个重要类，ActivityManagerService（AmS）和WindowManagerService（WmS）。</p>
+<ul>
+<li>AmS主要是负责管理所有应用程序中的Activity。</li>
+<li>WmS的作用是为所有的应用程序分配窗口，并管理这些窗口。包括分配窗口的大小，调节各窗口的叠放次序，隐藏或显示窗口。此外，WmS包括两个消息处理类：KeyQ类和InputDispatcherThread类。keyQ对象建立后，会启动一个线程，不断的读取用户的UI操作信息，比如触摸屏，按键等，并把这些消息放入消息队列QueueEvent类中；InputDispatcherThread对象建立后，也会立即启动一个线程，该线程不断地从 QueueEvent中取出用户信息，并进行一定的过滤，过滤后，再将这些信息发送给当前活动的客户端程序。</li>
+</ul>
+<h6 id="客户端">客户端</h6>
+<p>客户端就是Android应用程序apk，客户端包括一些重要的类。</p>
+<ul>
+<li>ActivityThread类：该类为应用程序的主线程类，所有的apk程序都有且仅有一个ActivityThread类，程序的入口是该类中的static main()函数。</li>
+<li>Activity类：该类为api程序的一个最小运行单元，一个apk程序中可以包含多个Activity对象，ActivityThread主类会根据用户操作选择运行哪个Activity对象。</li>
+<li>ApplicationThread类：该类主要是负责与AmS通信，接受远程AmS的IPC调用。</li>
+<li>W类：该类主要负责与WmS通信，接收远程远程WmS的IPC调用。</li>
+</ul>
+<h6 id="Linux驱动Binder">Linux驱动Binder</h6>
+<p>Binder驱动的作用是提供跨进程的消息传递。</p>
+<h6 id="APK程序的运行过程">APK程序的运行过程</h6>
+<ol>
+<li>某一个APK程序启动时，从类ActivityThread类的静态函数main()开始执行。</li>
+<li>调用prepareMainLooper()为UI线程创建一个消息队列：MessageQueue。</li>
+<li>创建一个ActivityThread对象，创建对象过程中，会创建一个Handler对象H和ApplicationThread对象（此对象负责与AmS通信）。</li>
+<li>UI主线程调用Looper.loop()方法进入消息循环体，此时，程序已经跑起来了，UI线程不断地从消息队列里读取消息并处理消息。</li>
+<li>当客户端接收AmS发送的消息，需要启动一个Activity时，客户端会创建一个Activity对象，接下来会做一些界面的创建工作；在创建完界面后，需要将界面显示到屏幕上，于是，调用WindowManager类，WindowManager创建一个ViewRoot对象（继承自Handler，本质就是Handler）和W类的对象（此对象负责与WmS通信），再调用WmS提供的远程接口完成添加一个窗口并显示到屏幕上。</li>
+</ol>
+<h6 id="消息机制：">消息机制：</h6>
+<ul>
+<li>消息进入MessageQueue<ul>
+<li>ApplicationThread对象本质是一个线程，负责与AmS通信，获得AmS的消息后，通过主线程的Handler对象H将消息发送到MessageQueue。</li>
+<li>W类对象本质也是一个线程，负责与WmS通信，获得WmS的消息后，通过ViewRoot对象（本质是Handler）将消息发送到MessageQueue。</li>
+</ul>
+</li>
+<li>消息处理<ol>
+<li>程序中有一个消息队列MessageQueue，UI线程进入Loop循环，不断从消息队列中读取消息处理消息。</li>
+<li>Looper从MessageQueue取出消息msg，调用消息的msg.target.dispatchMessage(msg)来让消息指定的Handler处理消息，本质就是那个Handler发送消息，这个消息就是哪个Handler来处理。</li>
+</ol>
+</li>
+</ul>
+<h6 id="线程">线程</h6>
+<p>一个Android程序运行，至少存在3个线程：UI线程，与AmS通信的线程（ApplicationThread对象），与WmS通信的线程（W类对象）.</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -106,14 +137,14 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/思考/">思考</a>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="https://github.com/Michaelgeek/2015/11/22/it杂想/" data-title="IT杂想 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
+  <div data-url="https://github.com/Michaelgeek/2013/10/19/android-apk的运行过程、消息机制及线程/" data-title="浅析Android apk的运行过程、消息机制及线程 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
   </div>
 
 </div>
@@ -123,18 +154,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/12/13/okhttp源码解析/" title="OkHttp源码解析">
+ <a href="/2014/07/10/开篇/" title="开篇">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  OkHttp源码解析</span>
+  开篇</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/11/15/rxjava/"  title="RxJava">
+<a href="/2012/03/29/android基于http的两种常用通信方式/"  title="Android基于HTTP的两种常用通信方式">
  <strong>NEXT:</strong><br/> 
- <span>RxJava
+ <span>Android基于HTTP的两种常用通信方式
 </span>
 </a>
 </div>
@@ -151,7 +182,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#技术方向&amp;技术积累"><span class="toc-number">1.</span> <span class="toc-text">技术方向&amp;技术积累</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#平台"><span class="toc-number">2.</span> <span class="toc-text">平台</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#机遇"><span class="toc-number">3.</span> <span class="toc-text">机遇</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#技术信仰"><span class="toc-number">4.</span> <span class="toc-text">技术信仰</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#基础"><span class="toc-number">1.</span> <span class="toc-text">基础</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#服务端"><span class="toc-number">2.</span> <span class="toc-text">服务端</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#客户端"><span class="toc-number">3.</span> <span class="toc-text">客户端</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux驱动Binder"><span class="toc-number">4.</span> <span class="toc-text">Linux驱动Binder</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#APK程序的运行过程"><span class="toc-number">5.</span> <span class="toc-text">APK程序的运行过程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#消息机制："><span class="toc-number">6.</span> <span class="toc-text">消息机制：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#线程"><span class="toc-number">7.</span> <span class="toc-text">线程</span></a></li></ol>
   </div>
 
 <div id="asidepart">
