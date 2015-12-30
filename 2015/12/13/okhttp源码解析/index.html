@@ -75,7 +75,7 @@ OkHttp是一款非常优秀的HTTP库，开源的，适用于Android平台。它
     </p>
   <p class="article-time">
     <time datetime="2015-12-13T15:29:39.000Z" itemprop="datePublished">12月 13 2015</time>
-    更新日期:<time datetime="2015-12-14T01:36:29.000Z" itemprop="dateModified">12月 14 2015</time>
+    更新日期:<time datetime="2015-12-14T02:25:52.000Z" itemprop="dateModified">12月 14 2015</time>
     
   </p>
 </header>
@@ -88,7 +88,7 @@ OkHttp是一款非常优秀的HTTP库，开源的，适用于Android平台。它
 		</div>
 		
 		<h2 id="概述">概述</h2>
-<p>OkHttp是一款非常优秀的HTTP库，开源的，适用于Android平台。它的官方介绍是：An HTTP+SPDY client for Android and Java applications。作为一个网络请求库，它封装了HTTP和SPDY协议，并提供了极其易用的接口给开发者调用。如果你不知道SPDY协议，可以维基百科一下。这篇文章主要说的是源码解析，如果想了解OkHttp的用法，可以移步到这篇文章看看：<a href="http://www.wangenyong.com/2015/09/22/android-okhttp/" target="_blank">http://www.wangenyong.com/2015/09/22/android-okhttp/</a> 。下面分别从核心类、执行流程、调用关系、连接、并发几个方面解析OkHttp。<br>OkHttp有两个大的角色：OkHttpClient和Call。OhHttpClient相当于Http的客户端，为当前应用的所有http请求服务的。它为所有http请求提供必要的配置和信息，并管理所有的Call。Call则是针对单个http请求，每个http请求都被封装成一个Call。</p>
+<p>OkHttp是一款非常优秀的HTTP库，开源的，适用于Android平台。它的官方介绍是：An HTTP+SPDY client for Android and Java applications。作为一个网络请求库，它封装了HTTP和SPDY协议，并提供了极其易用的接口给开发者调用。如果你不知道SPDY协议，可以维基百科一下。这篇文章主要说的是源码解析，如果想了解OkHttp的用法，可以移步到这篇文章看看：<a href="http://www.wangenyong.com/2015/09/22/android-okhttp/" title="王大水的博客" target="_blank">Android OKHttp 使用方法</a>。另外，这里有一篇讲述<a href="http://omgitsmgp.com/2015/12/02/effective-okhttp/" title="Michael Parker" target="_blank">effective-okhttp</a>的文章，也可以看看。下面分别从核心类、执行流程、调用关系、连接、并发几个方面解析OkHttp。<br>OkHttp有两个大的角色：OkHttpClient和Call。OhHttpClient相当于Http的客户端，为当前应用的所有http请求服务的。它为所有http请求提供必要的配置和信息，并管理所有的Call。Call则是针对单个http请求，每个http请求都被封装成一个Call。</p>
 <h2 id="OkHttpClient。">OkHttpClient。</h2>
 <p>下图是OkHttpClient的类图。<br><img src="../../../../img/OkHttpClient.jpg" alt="OkHttpClient"><br>上图中，主要列出了OkHttpClient包含的一些重要的类。每个类我列出了三条信息：类名、变量、功能。这些类服务于http请求的各个阶段。</p>
 <ol>
