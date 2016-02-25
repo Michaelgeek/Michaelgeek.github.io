@@ -9,8 +9,9 @@
     
     <meta name="author" content="Michael">
     
-    <meta name="description" content="前言：前一段时间接手了一个离职同事的工作。在给这位仁兄擦屁股的时候，发现他在项目中使用了RxAndroid（android版RxJava）。最近特地研究了一下这个库，感觉真特么牛逼啊。简直是异步神器，有了它，妈妈再也不用担心我使用AsyncTask或者维护异步操作线程池之类的事了。
-什么是RxJav">
+    <meta name="description" content="前言：RxJava火了很长时间，最近特地研究了一下这个库，感觉真特么牛逼啊。简直是异步神器，有了它，妈妈再也不用担心我使用AsyncTask或者维护异步操作线程池之类的事了。
+什么是RxJava？
+说到RxJava，必须先说ReactiveX。Rx是一个编程模型，目标是提供一致的编程接口，帮助开发者">
     
     
     
@@ -75,7 +76,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-11-14T16:53:17.000Z" itemprop="datePublished">11月 15 2015</time>
-    更新日期:<time datetime="2015-11-20T17:38:22.000Z" itemprop="dateModified">11月 21 2015</time>
+    更新日期:<time datetime="2016-02-25T10:27:12.000Z" itemprop="dateModified">2月 25 2016</time>
     
   </p>
 </header>
@@ -87,7 +88,7 @@
 		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是RxJava？"><span class="toc-number">1.</span> <span class="toc-text">什么是RxJava？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RxJava剖析"><span class="toc-number">2.</span> <span class="toc-text">RxJava剖析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RxJava使用"><span class="toc-number">3.</span> <span class="toc-text">RxJava使用</span></a></li><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#创建操作"><span class="toc-number">3.1.</span> <span class="toc-text">创建操作</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create"><span class="toc-number">3.1.1.</span> <span class="toc-text">Create</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Just"><span class="toc-number">3.1.2.</span> <span class="toc-text">Just</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#变换操作"><span class="toc-number">3.2.</span> <span class="toc-text">变换操作</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#map"><span class="toc-number">3.2.1.</span> <span class="toc-text">map</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#groupBy"><span class="toc-number">3.2.2.</span> <span class="toc-text">groupBy</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#过滤操作"><span class="toc-number">3.3.</span> <span class="toc-text">过滤操作</span></a></li><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#filter"><span class="toc-number">3.3.1.</span> <span class="toc-text">filter</span></a></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#结合操作"><span class="toc-number">3.4.</span> <span class="toc-text">结合操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#doOnSubscribe"><span class="toc-number">3.5.</span> <span class="toc-text">doOnSubscribe</span></a></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#运用"><span class="toc-number">4.</span> <span class="toc-text">运用</span></a></li></ol>
 		</div>
 		
-		<p>前言：前一段时间接手了一个离职同事的工作。在给这位仁兄擦屁股的时候，发现他在项目中使用了RxAndroid（android版RxJava）。最近特地研究了一下这个库，感觉真特么牛逼啊。简直是异步神器，有了它，妈妈再也不用担心我使用AsyncTask或者维护异步操作线程池之类的事了。</p>
+		<p>前言：RxJava火了很长时间，最近特地研究了一下这个库，感觉真特么牛逼啊。简直是异步神器，有了它，妈妈再也不用担心我使用AsyncTask或者维护异步操作线程池之类的事了。</p>
 <h1 id="什么是RxJava？">什么是RxJava？</h1>
 <p>说到RxJava，必须先说ReactiveX。Rx是一个编程模型，目标是提供一致的编程接口，帮助开发者更方便的处理异步数据流。Rx使用Observable序列组合异步和基于事件的程序。ReactiveX结合了观察者模式、迭代器模式和函数式编程的精华。这里有详细中文介绍：<a href="https://mcxiaoke.gitbooks.io/rxdocs/content/Intro.html" target="_blank">https://mcxiaoke.gitbooks.io/rxdocs/content/Intro.html</a> 。RxJava是 ReactiveX 在JVM上的一个实现。</p>
 <h1 id="RxJava剖析">RxJava剖析</h1>
@@ -698,7 +699,7 @@ rx<span class="preprocessor">.Observable</span><span class="preprocessor">.just<
 		
 		
 	</div>
-		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2015 
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
 		
 		<a href="https://github.com/Michaelgeek" target="_blank" title="Michael">Michael</a>
 		
