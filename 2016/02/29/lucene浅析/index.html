@@ -1,0 +1,692 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Lucene浅析 | Michael&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Michael">
+    
+    <meta name="description" content="前言
+公司需要在蓝牙电话的拨号键盘中实现T9搜索功能。第一版是使用字符串模糊匹配和正则表达式来实现该功能的。但用下来发现有点卡顿，体验不好。经过一段时间的优化，效果还是不理想。最后决定寻找新的技术方案。在寻找新的技术方案过程中，发现了Lucune，当利用Lucene实现该功能后，体验非常好，速度很快">
+    
+    
+    
+    
+    <link rel="alternate" href="http://michaelgeek.github.io/" title="Michael&#39;s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Michael&#39;s Blog" title="Michael&#39;s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Michael&#39;s Blog">Michael&#39;s Blog</a></h1>
+				<h2 class="blog-motto">90后程序员 移动开发者</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/29/lucene浅析/" title="Lucene浅析" itemprop="url">Lucene浅析</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://plus.google.com/100262645697225607342?rel=author" title="Michael" target="_blank" itemprop="author">Michael</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-02-29T13:28:59.000Z" itemprop="datePublished">2月 29 2016</time>
+    更新日期:<time datetime="2016-02-29T13:51:35.000Z" itemprop="dateModified">2月 29 2016</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#简介"><span class="toc-number">2.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Lucene原理"><span class="toc-number">3.</span> <span class="toc-text">Lucene原理</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Lucene模块"><span class="toc-number">4.</span> <span class="toc-text">Lucene模块</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#代码示例"><span class="toc-number">5.</span> <span class="toc-text">代码示例</span></a></li></ol>
+		</div>
+		
+		<h6 id="前言">前言</h6>
+<p>公司需要在蓝牙电话的拨号键盘中实现T9搜索功能。第一版是使用字符串模糊匹配和正则表达式来实现该功能的。但用下来发现有点卡顿，体验不好。经过一段时间的优化，效果还是不理想。最后决定寻找新的技术方案。在寻找新的技术方案过程中，发现了Lucune，当利用Lucene实现该功能后，体验非常好，速度很快，无卡顿感。遂写个demo记录一下。</p>
+<h6 id="简介">简介</h6>
+<p>Lucene是Apache基金会的一个开源全文搜索引擎工具包。实现语言是Java。中小型应用可以利用这个工具包，实现高效快速的搜索功能。</p>
+<h6 id="Lucene原理">Lucene原理</h6>
+<p>建立索引：Lucene利用Analyzer对输入的源数据A进行分词处理，分词处理后得到关键词列表B，并且建立关键词列表B与源数据A的映射关系。最后将这些信息写入索引目录中。搜索：利用Analyzer对搜索字符串进行分词处理，得到搜索关键词C，然后利用C去索引目录中检索，得到搜索结果。</p>
+<h6 id="Lucene模块">Lucene模块</h6>
+<p>Lucene有以下几大模块：index（索引模块）、document（索引单元模块）、analysis（分词模块）、store（存储索引模块）、search（搜索模块）、queryparser（搜索条件解析模块）。</p>
+<ul>
+<li>index 索引模块的主要功能是建立索引和读取索引。有两个重要的类：IndexWriter和IndexReader，对应的功能分别是建立索引和读取索引。后面demo代码中会详细介绍建立索引和读取索引的步骤。</li>
+<li>document 索引单元模块 索引的单位是document，一个document就是一条源数据记录。一个document包括多个字段。IndexWriter建立索引时，是写入一条或多条document。搜索时，得到的结果也是document的集合。</li>
+<li>analysis 分词模块。在此模块中，Analyzer（分析器）是最重要的类。它的功能是将字符串处理并转化成一个个关键词汇。Analyzer在建立索引和搜索时都会用到。Analyzer是一个抽象类，Lucene实现了几个Analyzer：KeywordAnalyzer、SimpleAnalyzer、WhitespaceAnalyzer。开发者也可以通过继承Analyzer定义自己需要的Analyzer。后面demo代码会详细介绍Analyzer分词流程。</li>
+<li>store 索引存储模块。此模块功能主要是提供索引存储目录。例如RAMDirectory：在内存中创建索引，FSDirectory：在File System中创建索引。</li>
+<li>search 搜索模块。此模块有两个重要的类：Query和IndexSearch。Query是搜索条件类，IndexSearch是搜索类。IndexSearch从IndexReader获得搜索索引，从Query获得搜索条件，最后调用search()执行搜索。</li>
+<li>queryparser 搜索条件解析模块。此模块最重要的类是QueryParser。QueryParser将原始的搜索字符串解析成Query对象。<h6 id="代码示例">代码示例</h6>
+</li>
+</ul>
+<ol>
+<li>自定义分词器，下面代码片段是一个自定义的分词器。</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+</pre></td><td class="code"><pre> <span class="javadoc">/**
+  * Lucene4.0实现了三个分词器:KeywordAnalyzer、SimpleAnalyzer、WhitespaceAnalyzer
+  * 这四大分词器有一个共同的抽象父类,此类有个方法public final TokenStream tokenStream(),即分词的一个流
+  * 假设有这样的文本"are you ok",实际它是以一个java.io.Reader传进分词器中
+  * Lucene分词器处理完毕后,会把整个分词转换为TokenStream,这个TokenStream中就保存所有的分词信息
+  *
+  *<span class="javadoctag"> @see</span> TokenStream 有两个实现类,分别为Tokenizer和TokenFilter
+  *<span class="javadoctag"> @see</span> Tokenizer----&gt;用于将一组数据划分为独立的语汇单元(即一个一个的单词)
+  *<span class="javadoctag"> @see</span> TokenFilter--&gt;过滤语汇单元
+  *<span class="javadoctag"> @see</span> -----------------------------------------------------------------------
+  * &lt;p&gt;
+  * 分词流程
+  * 1)将一组数据流java.io.Reader交给Tokenizer,由其将数据转换为一个个的语汇单元
+  * 2)通过大量的TokenFilter对已经分好词的数据进行过滤操作,最后产生TokenStream
+  * 3)通过TokenStream完成索引的存储
+  *<span class="javadoctag"> @see</span> ------------------------------------------------------------------------
+  */</span>
+ <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomAnalyzer</span> <span class="keyword">extends</span> <span class="title">Analyzer</span> {</span>
+
+     <span class="keyword">protected</span> <span class="keyword">final</span> Version matchVersion;
+
+     <span class="keyword">public</span> <span class="title">CustomAnalyzer</span>(Version version) {
+         matchVersion = version;
+     }
+
+     <span class="annotation">@Override</span>
+     <span class="keyword">protected</span> TokenStreamComponents <span class="title">createComponents</span>(String s, Reader reader) {
+         <span class="comment">//LetterTokenizer是基于文本单词的分词,它会根据非字母符号来分词</span>
+         Tokenizer source = <span class="keyword">new</span> LetterTokenizer(matchVersion, reader);
+         <span class="comment">//LowerCaseFilter是将数据转换为小写</span>
+         TokenStream filter = <span class="keyword">new</span> LowerCaseFilter(matchVersion, source);
+         <span class="keyword">return</span> <span class="keyword">new</span> TokenStreamComponents(source, filter);
+     }
+
+     <span class="javadoc">/**
+      * The default implementation returns &lt;code&gt;reader&lt;/code&gt;
+      * unchanged.
+      *
+      *<span class="javadoctag"> @param</span> fieldName IndexableField name being indexed
+      *<span class="javadoctag"> @param</span> reader    original Reader
+      *<span class="javadoctag"> @return</span> reader, optionally decorated with CharFilter(s)
+      */</span>
+     <span class="keyword">protected</span> Reader <span class="title">initReader</span>(String fieldName, Reader reader) {
+         <span class="keyword">return</span> reader;
+     }
+ }
+</pre></td></tr></table></figure>
+
+
+<p>2.. 建立索引，搜索。在下面代码中，先调用buildIndex()建立索引，然后调用search()便可执行搜索。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+</pre></td><td class="code"><pre><span class="javadoc">/**
+ * Created by Michael.
+ */</span>
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LuceneDemo</span> {</span>
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"LuceneDemo"</span>;
+
+    <span class="javadoc">/**
+     * 创建索引
+     *
+     *<span class="javadoctag"> @see</span> ---------------------------------------------------------------------------------------------------------
+     *<span class="javadoctag"> @see</span> 1、创建Directory-----------------指定索引被保存的位置
+     *<span class="javadoctag"> @see</span> 2、创建IndexWriter---------------通过IndexWriter写索引
+     *<span class="javadoctag"> @see</span> 3、创建Document对象---------------我们索引的有可能是一段文本or数据库中的一张表
+     *<span class="javadoctag"> @see</span> 4、为Document添加Field------------相当于Document的标题、大小、内容、路径等等,二者类似于数据库表中每条记录和字段的关系
+     *<span class="javadoctag"> @see</span> 5、通过IndexWriter添加文档到索引中
+     *<span class="javadoctag"> @see</span> 6、关闭IndexWriter----------------用完IndexWriter之后,必须关闭之
+     */</span>
+    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">buildIndex</span>() {
+        Directory directory = <span class="keyword">null</span>;
+        IndexWriter writer = <span class="keyword">null</span>;
+        Document doc = <span class="keyword">null</span>;
+        Field nameField = <span class="keyword">null</span>;
+        Field numberField = <span class="keyword">null</span>;
+        <span class="keyword">try</span> {
+            <span class="comment">// FSDirectory会根据当前的运行环境打开一个合理的基于File的Directory(若在内存中创建索引则new RAMDirectory())</span>
+            <span class="comment">// 这里是在手机默认存储上创建文件夹index，在文件夹index中创建索引</span>
+            directory = FSDirectory.open(<span class="keyword">new</span> File(Environment.getExternalStorageDirectory(), <span class="string">"index"</span>));
+            <span class="comment">// IndexWriterConfig()构造方法的Version.LUCENE_40参数值指明索引所匹配的版本号,</span>
+            <span class="comment">// 并使用自定义的分词器：CustomAnalyzer</span>
+            writer = <span class="keyword">new</span> IndexWriter(directory, <span class="keyword">new</span> IndexWriterConfig(Version.LUCENE_40, <span class="keyword">new</span> CustomAnalyzer(Version.LUCENE_40)));
+
+            <span class="comment">// 把内容添加到索引域中,这里连续添加了两个索引单元的数据</span>
+            doc = <span class="keyword">new</span> Document();
+            <span class="comment">// Field.Store.YES-----------这里是将文件的全名存储到硬盘中</span>
+            nameField = <span class="keyword">new</span> StringField(<span class="string">"name"</span>, <span class="string">"michael"</span>, Field.Store.YES);
+            doc.add(nameField);
+            numberField = <span class="keyword">new</span> StringField(<span class="string">"number"</span>, <span class="string">"16512"</span>, Field.Store.YES);
+            doc.add(numberField);
+            <span class="comment">// 通过IndexWriter添加文档到索引中</span>
+            writer.addDocument(doc);
+
+            doc = <span class="keyword">new</span> Document();
+            nameField = <span class="keyword">new</span> StringField(<span class="string">"name"</span>, <span class="string">"coco"</span>, Field.Store.YES);
+            doc.add(nameField);
+            numberField = <span class="keyword">new</span> StringField(<span class="string">"number"</span>, <span class="string">"15867"</span>, Field.Store.YES);
+            doc.add(numberField);
+            writer.addDocument(doc);
+
+        } <span class="keyword">catch</span> (Exception e) {
+            Log.e(TAG, <span class="string">"build index exception"</span>);
+            e.printStackTrace();
+        } <span class="keyword">finally</span> {
+            <span class="keyword">if</span> (<span class="keyword">null</span> != writer) {
+                <span class="keyword">try</span> {
+                    writer.close(); <span class="comment">// IndexWriter在用完之后一定要关闭</span>
+                } <span class="keyword">catch</span> (IOException ce) {
+                    Log.e(TAG, <span class="string">"close IndexWriter exception"</span>);
+                    ce.printStackTrace();
+                }
+            }
+        }
+    }
+
+    <span class="javadoc">/**
+     * 搜索
+     * &lt;p&gt;
+     * 1、创建Directory
+     * 2、创建IndexReader
+     * 3、根据IndexReader创建IndexSearcher
+     * 4、创建搜索的Query
+     * 5、根据searcher搜索并返回TopDocs
+     * 6、根据TopDocs获取ScoreDoc对象
+     * 7、根据searcher和ScoreDoc对象获取具体的Document对象
+     * 8、根据Document对象获取需要的值
+     * 9、关闭IndexReader
+     */</span>
+    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">search</span>() {
+        IndexReader reader = <span class="keyword">null</span>;
+        <span class="keyword">try</span> {
+            Directory directory = FSDirectory.open(<span class="keyword">new</span> File(Environment.getExternalStorageDirectory(), <span class="string">"index"</span>));
+            reader = DirectoryReader.open(directory);
+            IndexSearcher searcher = <span class="keyword">new</span> IndexSearcher(reader);
+            <span class="comment">// 创建基于Parser搜索的Query,创建时需指定其"搜索的版本,默认搜索的域,分词器"....这里的域指的是创建索引时Field的名字</span>
+            QueryParser parser = <span class="keyword">new</span> QueryParser(Version.LUCENE_40, <span class="string">"name"</span>, <span class="keyword">new</span> SimpleAnalyzer(Version.LUCENE_40));
+            Query query = parser.parse(<span class="string">"coco"</span>);       <span class="comment">// 指定搜索域为name(即上一行代码指定的"name")中包含"coco"的文档</span>
+            TopDocs tds = searcher.search(query, <span class="number">10</span>); <span class="comment">// 第二个参数指定搜索后显示的条数,若查到5条则显示为5条,查到15条则只显示10条</span>
+            ScoreDoc[] sds = tds.scoreDocs;           <span class="comment">// TopDocs中存放的并不是我们的文档,而是文档的ScoreDoc对象</span>
+            <span class="keyword">for</span> (ScoreDoc sd : sds) {                   <span class="comment">// ScoreDoc对象相当于每个文档的ID号,我们就可以通过ScoreDoc来遍历文档</span>
+                Document doc = searcher.doc(sd.doc);  <span class="comment">// sd.doc得到的是文档的序号</span>
+                Log.i(TAG, <span class="string">"name:"</span> + doc.get(<span class="string">"name"</span>) + <span class="string">" number:"</span> + doc.get(<span class="string">"number"</span>));
+            }
+        } <span class="keyword">catch</span> (Exception e) {
+        	Log.e(TAG, <span class="string">"search exception"</span>);
+            e.printStackTrace();
+        } <span class="keyword">finally</span> {
+            <span class="keyword">if</span> (<span class="keyword">null</span> != reader) {
+                <span class="keyword">try</span> {
+                    reader.close();
+                } <span class="keyword">catch</span> (IOException e) {
+                	Log.e(TAG, <span class="string">"close IndexReader exception"</span>);
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+</pre></td></tr></table></figure>
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Lucene/">Lucene</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Java/">Java</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://github.com/Michaelgeek/2016/02/29/lucene浅析/" data-title="Lucene浅析 | Michael&#39;s Blog" data-tsina="2667181007" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/12/30/深入理解java虚拟机之java泛型/"  title="深入理解Java虚拟机之Java泛型--读书笔记">
+ <strong>NEXT:</strong><br/> 
+ <span>深入理解Java虚拟机之Java泛型--读书笔记
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#简介"><span class="toc-number">2.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Lucene原理"><span class="toc-number">3.</span> <span class="toc-text">Lucene原理</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Lucene模块"><span class="toc-number">4.</span> <span class="toc-text">Lucene模块</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#代码示例"><span class="toc-number">5.</span> <span class="toc-text">代码示例</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Android/" title="Android">Android<sup>11</sup></a></li>
+		
+			<li><a href="/categories/Android studio/" title="Android studio">Android studio<sup>1</sup></a></li>
+		
+			<li><a href="/categories/Java/" title="Java">Java<sup>2</sup></a></li>
+		
+			<li><a href="/categories/思考/" title="思考">思考<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Animation/" title="Animation">Animation<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Gradle/" title="Gradle">Gradle<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Layout/" title="Layout">Layout<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Library/" title="Library">Library<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Lucene/" title="Lucene">Lucene<sup>1</sup></a></li>
+		
+			<li><a href="/tags/OkHttp/" title="OkHttp">OkHttp<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RenderScript/" title="RenderScript">RenderScript<sup>1</sup></a></li>
+		
+			<li><a href="/tags/RxJava/" title="RxJava">RxJava<sup>1</sup></a></li>
+		
+			<li><a href="/tags/http/" title="http">http<sup>1</sup></a></li>
+		
+			<li><a href="/tags/service/" title="service">service<sup>1</sup></a></li>
+		
+			<li><a href="/tags/泛型/" title="泛型">泛型<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="http://michaelgeek.github.io/" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Believe it or not, Coding changes the world <br/>
+			Passion makes dream come true!</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		<a href="http://weibo.com/2667181007" target="_blank" title="weibo"></a>
+		
+		
+		
+		<a href="https://github.com/Michaelgeek" target="_blank" title="github"></a>
+		
+		
+		<a href="https://www.facebook.com/kongyouji" target="_blank" title="facebook"></a>
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="https://github.com/Michaelgeek" target="_blank" title="Michael">Michael</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>

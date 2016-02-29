@@ -76,7 +76,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-12-30T15:09:28.000Z" itemprop="datePublished">12月 30 2015</time>
-    更新日期:<time datetime="2015-12-30T15:15:24.000Z" itemprop="dateModified">12月 30 2015</time>
+    更新日期:<time datetime="2016-02-29T13:34:31.000Z" itemprop="dateModified">2月 29 2016</time>
     
   </p>
 </header>
@@ -85,7 +85,7 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#什么是泛型？"><span class="toc-number">1.</span> <span class="toc-text">什么是泛型？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#泛型实现"><span class="toc-number">2.</span> <span class="toc-text">泛型实现</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#获取泛型的参数化类型"><span class="toc-number">3.</span> <span class="toc-text">获取泛型的参数化类型</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#什么是泛型？"><span class="toc-number">1.</span> <span class="toc-text">什么是泛型？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#泛型实现"><span class="toc-number">2.</span> <span class="toc-text">泛型实现</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#获取泛型的参数化类型"><span class="toc-number">3.</span> <span class="toc-text">获取泛型的参数化类型</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#代码示例，运行期通过反射获取泛型信息"><span class="toc-number">4.</span> <span class="toc-text">代码示例，运行期通过反射获取泛型信息</span></a></li></ol>
 		</div>
 		
 		<p>这是《深入理解Java虚拟机第二版》的读书笔记。其中，通过反射获取泛型信息，是学习自这篇文章：<a href="http://tutorials.jenkov.com/java-reflection/generics.html" target="_blank">http://tutorials.jenkov.com/java-reflection/generics.html</a> </p>
@@ -98,7 +98,7 @@
 <li>由于Java泛型的引入，各种场景（虚拟机解析、反射等）下的方法调用都可能对原有的基础产生影响和新的需求，如在泛型类中如何获取传入的参数化类型等。因此，JCP组织对虚拟机规范做出了相应的修改，引入了诸如Signature、LocalVari-ableTypeTable等新的属性用于解决伴随泛型而来的参数类型的识别问题，Signature是其中最重要的一项属性，它的作用就是存储一个方法在字节码层面的特征签名，这个属性中保存的参数类型并不是原生类型，而是包括了参数化类型的信息。</li>
 <li>另外，从Signature属性的出现我们还可以得出结论，擦除法所谓的擦除，仅仅是对方法的Code属性中的字节码进行擦除，实际上元数据中还是保留了泛型信息，这也是我们能通过反射手段取得参数化类型的根本依据。</li>
 </ul>
-<p>四、代码示例，运行期通过反射获取泛型信息</p>
+<h6 id="代码示例，运行期通过反射获取泛型信息">代码示例，运行期通过反射获取泛型信息</h6>
 <ul>
 <li>方法返回值是泛型对象<br>下面的代码，是当返回值是泛型对象时，在运行期获取泛型信息的一个例子。</li>
 </ul>
@@ -221,6 +221,11 @@ Type genericFieldType = field.getGenericType();
 	</div>
 		<footer class="article-footer clearfix">
 
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/泛型/">泛型</a>
+  </div>
+
 
 <div class="article-categories">
   <span></span>
@@ -240,6 +245,14 @@ Type genericFieldType = field.getGenericType();
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2016/02/29/lucene浅析/" title="Lucene浅析">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Lucene浅析</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2015/12/30/android-weekly笔记/"  title="Android Weekly笔记">
@@ -261,7 +274,7 @@ Type genericFieldType = field.getGenericType();
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#什么是泛型？"><span class="toc-number">1.</span> <span class="toc-text">什么是泛型？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#泛型实现"><span class="toc-number">2.</span> <span class="toc-text">泛型实现</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#获取泛型的参数化类型"><span class="toc-number">3.</span> <span class="toc-text">获取泛型的参数化类型</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-6"><a class="toc-link" href="#什么是泛型？"><span class="toc-number">1.</span> <span class="toc-text">什么是泛型？</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#泛型实现"><span class="toc-number">2.</span> <span class="toc-text">泛型实现</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#获取泛型的参数化类型"><span class="toc-number">3.</span> <span class="toc-text">获取泛型的参数化类型</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#代码示例，运行期通过反射获取泛型信息"><span class="toc-number">4.</span> <span class="toc-text">代码示例，运行期通过反射获取泛型信息</span></a></li></ol>
   </div>
 
 <div id="asidepart">
@@ -277,7 +290,7 @@ Type genericFieldType = field.getGenericType();
 		
 			<li><a href="/categories/Android studio/" title="Android studio">Android studio<sup>1</sup></a></li>
 		
-			<li><a href="/categories/Java/" title="Java">Java<sup>1</sup></a></li>
+			<li><a href="/categories/Java/" title="Java">Java<sup>2</sup></a></li>
 		
 			<li><a href="/categories/思考/" title="思考">思考<sup>2</sup></a></li>
 		
@@ -298,6 +311,8 @@ Type genericFieldType = field.getGenericType();
 		
 			<li><a href="/tags/Library/" title="Library">Library<sup>1</sup></a></li>
 		
+			<li><a href="/tags/Lucene/" title="Lucene">Lucene<sup>1</sup></a></li>
+		
 			<li><a href="/tags/OkHttp/" title="OkHttp">OkHttp<sup>1</sup></a></li>
 		
 			<li><a href="/tags/RenderScript/" title="RenderScript">RenderScript<sup>1</sup></a></li>
@@ -307,6 +322,8 @@ Type genericFieldType = field.getGenericType();
 			<li><a href="/tags/http/" title="http">http<sup>1</sup></a></li>
 		
 			<li><a href="/tags/service/" title="service">service<sup>1</sup></a></li>
+		
+			<li><a href="/tags/泛型/" title="泛型">泛型<sup>1</sup></a></li>
 		
 		</ul>
 </div>
